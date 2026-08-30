@@ -146,7 +146,7 @@ chrome.runtime.onMessage.addListener((message: BackgroundMessage, _sender, sendR
           break
         case 'RUNTIME_COMMAND': sendResponse({ ok: true, data: await sendRuntimeCommand(message.command, message.payload) }); break
         case 'TEST_NOTIFICATION':
-          await chrome.notifications.create('test', { type: 'basic', iconUrl: 'icons/icon-128.png', title: 'Custom Chat Notifier test', message: 'Notifications are working.', priority: 2 })
+          await chrome.notifications.create('test', { type: 'basic', iconUrl: 'icons/icon-128.png', title: 'Telegram Custom Notifier test', message: 'Notifications are working.', priority: 2 })
           sendResponse({ ok: true })
           break
         case 'CLEAR_LOGS': await chrome.storage.local.set({ [KEYS.logs]: [] }); sendResponse({ ok: true }); break

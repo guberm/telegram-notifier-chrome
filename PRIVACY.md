@@ -1,10 +1,10 @@
-# Privacy Policy for Custom Chat Notifier
+# Privacy Policy for Telegram Custom Notifier
 
 Last updated: August 30, 2026
 
 ## What data the extension handles
 
-Custom Chat Notifier handles the Telegram API ID and API Hash supplied by the user, Telegram authorization data, selected chat identifiers, notification preferences, message-filter rules, chat metadata, and Telegram message contents needed to evaluate those rules and show local notifications.
+Telegram Custom Notifier handles the Telegram API ID and API Hash supplied by the user, Telegram authorization data, selected chat identifiers, notification preferences, message-filter rules, chat metadata, and Telegram message contents needed to evaluate those rules and show local notifications.
 
 The extension does not request or process general browsing history or content from websites the user visits.
 
@@ -32,7 +32,7 @@ Data is not sold, rented, or shared with advertisers or data brokers. Data is ex
 
 ## Retention, export, and deletion
 
-Settings remain in the current Chrome profile until the user changes them, clears extension data, or removes the extension. The user can export settings and diagnostic logs from the options page. Logging out revokes the active Telegram authorization used by the extension. Removing the extension deletes its Chrome-owned local storage and IndexedDB data.
+Settings remain in the current Chrome profile until the user changes them, clears extension data, or removes the extension. The user can import or export Android-compatible settings JSON and export diagnostic logs from the options page. Logging out revokes the active Telegram authorization used by the extension. Removing the extension deletes its Chrome-owned local storage and IndexedDB data.
 
 If the user explicitly backs up settings to Saved Messages, that backup remains in the user's Telegram account until the user deletes it in Telegram.
 

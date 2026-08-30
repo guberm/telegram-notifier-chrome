@@ -1,4 +1,4 @@
-import { normalizeConfig, type AppConfig, type ChatRule, type Direction } from './shared/config'
+import { exportConfig, importConfig, normalizeConfig, SETTINGS_BACKUP_FILE, type AppConfig, type ChatRule, type Direction } from './shared/config'
 import type { AppState, BackgroundMessage, ChatInfo, Credentials } from './shared/protocol'
 
 const element = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T
@@ -204,17 +204,17 @@ element('save-chat-rule').addEventListener('click', (event) => {
   void run(() => saveConfig('Advanced rules saved'))
 })
 
-element('export-settings').addEventListener('click', () => download('custom-chat-notifier-settings.json', JSON.stringify(state.config, null, 2)))
+element('export-settings').addEventListener('click', () => download(SETTINGS_BACKUP_FILE, JSON.stringify(exportConfig(state.config), null, 2)))
 element<HTMLInputElement>('import-settings').addEventListener('change', (event) => { void run(async () => {
   const file = (event.currentTarget as HTMLInputElement).files?.[0]
   if (!file || file.size > 1_000_000) throw new Error('Choose a JSON file smaller than 1 MB')
-  state.config = normalizeConfig(JSON.parse(await file.text()))
+  state.config = importConfig(JSON.parse(await file.text()))
   await saveConfig('Settings imported')
   renderState()
 }) })
-element('backup-saved').addEventListener('click', () => { void run(async () => { await send({ target: 'background', type: 'RUNTIME_COMMAND', command: 'BACKUP_SAVED', payload: state.config }); toast('Backup sent to Saved Messages') }) })
-element('restore-saved').addEventListener('click', () => { void run(async () => { state.config = normalizeConfig(await send({ target: 'background', type: 'RUNTIME_COMMAND', command: 'RESTORE_SAVED' })); await saveConfig('Settings restored from Saved Messages'); renderState() }) })
-element('export-logs').addEventListener('click', () => download('custom-chat-notifier.log', element('logs').textContent ?? '', 'text/plain'))
+element('backup-saved').addEventListener('click', () => { void run(async () => { await send({ target: 'background', type: 'RUNTIME_COMMAND', command: 'BACKUP_SAVED', payload: exportConfig(state.config) }); toast('Backup sent to Saved Messages') }) })
+element('restore-saved').addEventListener('click', () => { void run(async () => { state.config = importConfig(await send({ target: 'background', type: 'RUNTIME_COMMAND', command: 'RESTORE_SAVED' })); await saveConfig('Settings restored from Saved Messages'); renderState() }) })
+element('export-logs').addEventListener('click', () => download('telegram-custom-notifier.log', element('logs').textContent ?? '', 'text/plain'))
 element('clear-logs').addEventListener('click', () => { void run(async () => { await send({ target: 'background', type: 'CLEAR_LOGS' }); state.logs = []; renderLogs(); toast('Log cleared') }) })
 
 chrome.storage.onChanged.addListener((changes, area) => {

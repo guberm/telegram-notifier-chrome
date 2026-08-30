@@ -67,4 +67,5 @@ dialog::backdrop { background:rgba(18,27,45,.5); }
 .brand { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
 .brand div { display:flex; flex-direction:column; }
 .brand span { color:var(--muted); font-size:12px; text-transform:capitalize; }
+.popup-data-actions > * { flex:1; justify-content:center; }
 @media (max-width:760px) { .hero { align-items:stretch; flex-direction:column; } .status-card { min-width:0; } .grid.two,.chat-tools { grid-template-columns:1fr; } .chat-row { grid-template-columns:1fr 1fr; } .chat-main { grid-column:1/-1; } .quiet-control { grid-template-columns:1fr 1fr; } .quiet-control .inline-check { grid-column:1/-1; } }

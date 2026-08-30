@@ -1,4 +1,4 @@
-# Custom Chat Notifier
+# Telegram Custom Notifier
 
 A Manifest V3 Chrome extension that connects directly to a Telegram account and shows local desktop notifications only for chats and messages that match your rules.
 
@@ -16,13 +16,13 @@ The extension is independent, open source, and not affiliated with or endorsed b
 - Forum-topic titles formatted as `Group name - Topic name`.
 - Separate notification conversations by chat, topic, and sender.
 - Notification clicks open a Telegram message link when available; private conversations fall back to Telegram Web.
-- JSON settings import/export and settings backup/restore through Saved Messages.
+- Android-compatible JSON settings import/export and settings backup/restore through Saved Messages, with legacy Chrome backup support.
 - Leave groups/channels, delete private history, and optionally block bots.
 - Local health state, test notification, unread badge, and exportable diagnostic log without message contents.
 
 ## Install from a GitHub release
 
-1. Download `custom-chat-notifier-v1.0.0.zip` from the latest release and extract it.
+1. Download the ZIP from the latest release and extract it.
 2. Open `chrome://extensions`.
 3. Enable **Developer mode**.
 4. Select **Load unpacked** and choose the extracted folder.
@@ -62,7 +62,7 @@ npm run check
 npm run package
 ```
 
-`npm run check` runs 13 focused tests, TypeScript validation, and the production Vite build. The package script creates a clean ZIP from `dist/` under `release-artifacts/` and prints its SHA-256.
+`npm run check` runs 18 focused tests, TypeScript validation, and the production Vite build. The package script creates a clean ZIP from `dist/` under `release-artifacts/` and prints its SHA-256.
 
 ## Architecture
 

@@ -23,5 +23,5 @@ jobs:
       - run: npm run package
       - uses: actions/upload-artifact@v7
         with:
-          name: custom-chat-notifier
+          name: telegram-custom-notifier
           path: release-artifacts/*.zip

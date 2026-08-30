@@ -52,6 +52,9 @@ export const DEFAULT_CONFIG: AppConfig = {
   chatRules: {}
 }
 
+export const SETTINGS_BACKUP_FILE = 'telegram_notifier_settings.json'
+const LEGACY_SETTINGS_BACKUP_FILE = 'custom-chat-notifier-settings.json'
+
 const directions = new Set<Direction>(['incoming', 'outgoing', 'both', 'none'])
 
 function cleanStrings(value: unknown): string[] {
@@ -125,4 +128,58 @@ export function normalizeConfig(value: unknown): AppConfig {
     },
     chatRules
   }
+}
+
+function portableId(value: string): string | number {
+  const number = Number(value)
+  return Number.isSafeInteger(number) ? number : value
+}
+
+function portableIds(values: string[]): Array<string | number> {
+  return values.map(portableId)
+}
+
+export function importConfig(value: unknown): AppConfig {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Configuration must be a JSON object')
+  const input = value as Record<string, unknown>
+  const version = Number(input.version ?? 1)
+  if (version !== 1) throw new Error(`Unsupported configuration version: ${version}`)
+  if (!('favoriteChats' in input) && !('quietHoursEnabled' in input)) return normalizeConfig(input)
+  return normalizeConfig({
+    ...input,
+    selectedChatIds: input.favoriteChats,
+    hiddenChatIds: input.hiddenChats,
+    quietHours: {
+      enabled: input.quietHoursEnabled,
+      startMinutes: input.quietStartMinutes,
+      endMinutes: input.quietEndMinutes
+    }
+  })
+}
+
+export function exportConfig(value: AppConfig): Record<string, unknown> {
+  const config = normalizeConfig(value)
+  return {
+    version: 1,
+    favoriteChats: portableIds(config.selectedChatIds),
+    hiddenChats: portableIds(config.hiddenChatIds),
+    globalDirection: config.globalDirection.toUpperCase(),
+    chatDirections: Object.fromEntries(Object.entries(config.chatDirections).map(([id, value]) => [id, value.toUpperCase()])),
+    textFilters: config.textFilters,
+    regexFilters: config.regexFilters,
+    notificationsEnabled: config.notificationsEnabled,
+    showMessagePreviews: config.showMessagePreviews,
+    quietHoursEnabled: config.quietHours.enabled,
+    quietStartMinutes: config.quietHours.startMinutes,
+    quietEndMinutes: config.quietHours.endMinutes,
+    chatRules: Object.fromEntries(Object.entries(config.chatRules).map(([id, rule]) => [id, {
+      ...rule,
+      senderIds: portableIds(rule.senderIds),
+      threadIds: portableIds(rule.threadIds)
+    }]))
+  }
+}
+
+export function isSettingsBackupFile(fileName: string | null | undefined): boolean {
+  return fileName === SETTINGS_BACKUP_FILE || fileName === LEGACY_SETTINGS_BACKUP_FILE
 }

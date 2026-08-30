@@ -1,4 +1,4 @@
-# Chrome Web Store Listing — Custom Chat Notifier
+# Chrome Web Store Listing — Telegram Custom Notifier
 
 > Last Updated: 2026-08-30
 
@@ -6,7 +6,7 @@
 
 **Extension Name**
 
-Custom Chat Notifier
+Telegram Custom Notifier
 
 **Short Description**
 
@@ -21,7 +21,7 @@ FEATURES
 • Choose incoming, outgoing, both, or muted notification direction globally or per chat
 • Apply quiet hours, text filters, regular expressions, mentions, sender IDs, topic IDs, and required keywords
 • Show optional message previews, media labels, and forum topic names
-• Import or export settings as JSON and back up settings to Saved Messages
+• Import or export Android-compatible settings JSON and back up settings to Saved Messages
 • Keep a local diagnostic log without message contents or authentication secrets
 
 HOW TO USE
@@ -40,7 +40,7 @@ Storage keeps local credentials, settings, state, and logs. Notifications displa
 SUPPORT
 Report issues at https://github.com/guberm/telegram-notifier-chrome/issues or email michael@guber.dev.
 
-Version 1.0.0 — Initial public release.
+Version 1.1.0 — New icon and name, plus quick Android-compatible settings import/export from the popup.
 
 **Category**
 
@@ -124,7 +124,8 @@ https://github.com/guberm/telegram-notifier-chrome/blob/main/PRIVACY.md
 
 | Version | Date | Changes | Status |
 |---------|------|---------|--------|
-| 1.0.0 | 2026-08-30 | Initial direct-MTProto notification release | Draft |
+| 1.1.0 | 2026-08-30 | Rename, supplied icon, quick Android-compatible settings import/export in the popup, legacy backup restore | Prepared |
+| 1.0.0 | 2026-08-30 | Initial direct-MTProto notification release | GitHub release |
 
 ## Review Notes
 

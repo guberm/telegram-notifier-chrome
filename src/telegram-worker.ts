@@ -1,9 +1,8 @@
 import { InputMedia, TelegramClient, type Message, type TelegramClient as TelegramClientType } from '@mtcute/web'
-import type { NotificationEvent } from './shared/config'
+import { isSettingsBackupFile, SETTINGS_BACKUP_FILE, type NotificationEvent } from './shared/config'
 import type { BackgroundMessage, ChatInfo, Credentials, OffscreenMessage, RuntimeState } from './shared/protocol'
 import { chatType, mediaKind, messageUrl } from './shared/telegram-mapper'
 
-const BACKUP_FILE = 'custom-chat-notifier-settings.json'
 let client: TelegramClientType | null = null
 let credentialsKey = ''
 let pendingCode: { phone: string; phoneCodeHash: string } | null = null
@@ -113,16 +112,16 @@ async function removeChat(payload: unknown): Promise<void> {
 async function backupToSavedMessages(payload: unknown): Promise<void> {
   const json = JSON.stringify(payload, null, 2)
   await requireClient().sendMedia('self', InputMedia.document(new Blob([json], { type: 'application/json' }), {
-    fileName: BACKUP_FILE,
+    fileName: SETTINGS_BACKUP_FILE,
     fileMime: 'application/json'
-  }), { caption: 'Custom Chat Notifier settings backup' })
+  }), { caption: 'Telegram Custom Notifier settings backup' })
 }
 
 async function restoreFromSavedMessages(): Promise<unknown> {
   const tg = requireClient()
   for await (const message of tg.iterHistory('self', { limit: 100 })) {
     const media = message.media
-    if (media?.type !== 'document' || media.fileName !== BACKUP_FILE) continue
+    if (media?.type !== 'document' || !isSettingsBackupFile(media.fileName)) continue
     const bytes = await tg.downloadAsBuffer(media)
     return JSON.parse(new TextDecoder().decode(bytes))
   }
