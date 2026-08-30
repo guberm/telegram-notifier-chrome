@@ -7,5 +7,7 @@ describe('popup', () => {
 
     expect(html).toContain('id="popup-export"')
     expect(html).toContain('id="popup-import"')
+    expect(html).toContain('id="popup-inbox-list"')
+    expect(html).toContain('id="popup-dismiss-all"')
   })
 })

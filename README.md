@@ -16,6 +16,7 @@ The extension is independent, open source, and not affiliated with or endorsed b
 - Forum-topic titles formatted as `Group name - Topic name`.
 - Separate notification conversations by chat, topic, and sender.
 - Notification clicks open a Telegram message link when available; private conversations fall back to Telegram Web.
+- Popup inbox with date, chat/sender source, message preview, per-message dismissal, dismiss-all, and Telegram links.
 - Android-compatible JSON settings import/export and settings backup/restore through Saved Messages, with legacy Chrome backup support.
 - Leave groups/channels, delete private history, and optionally block bots.
 - Local health state, test notification, unread badge, and exportable diagnostic log without message contents.
@@ -38,6 +39,7 @@ Disable Telegram Web/Desktop notifications if you do not want duplicate notifica
 - API credentials and extension settings are stored in `chrome.storage.local` in the current Chrome profile.
 - The encrypted Telegram authorization session and Telegram peer cache are stored in extension-owned IndexedDB.
 - Message content is processed locally to evaluate filters and construct notifications.
+- Up to 100 recent matched messages are retained locally for the popup inbox until dismissed.
 - No analytics, advertising, telemetry, or developer-operated server is included.
 - The diagnostic log stores event outcomes and errors, not message text, phone numbers, login codes, passwords, API hashes, or session keys.
 - Logging out revokes the active Telegram authorization used by the extension. Removing the extension deletes its Chrome-owned local storage.
@@ -62,7 +64,7 @@ npm run check
 npm run package
 ```
 
-`npm run check` runs 18 focused tests, TypeScript validation, and the production Vite build. The package script creates a clean ZIP from `dist/` under `release-artifacts/` and prints its SHA-256.
+`npm run check` runs 21 focused tests, TypeScript validation, and the production Vite build. The package script creates a clean ZIP from `dist/` under `release-artifacts/` and prints its SHA-256.
 
 ## Architecture
 
@@ -70,7 +72,7 @@ npm run package
 - `offscreen.ts` is a minimal `chrome.runtime` bridge and spawns the Worker required by its declared offscreen reason.
 - `telegram-worker.ts` runs `@mtcute/web`, WebSocket transport, IndexedDB session storage, Telegram authorization, dialogs, and message updates.
 - `options.ts` provides account setup, chat selection, rules, backups, and diagnostics.
-- `popup.ts` exposes status, the master switch, test notification, and settings shortcut.
+- `popup.ts` exposes the local message inbox, Telegram links, dismiss controls, status, the master switch, test notification, and settings shortcut.
 
 All executable code, including the MTProto library and WASM crypto modules, is bundled in the extension package. No remotely hosted code is executed.
 

@@ -10,7 +10,7 @@ The extension does not request or process general browsing history or content fr
 
 ## How data is stored
 
-Telegram API credentials, extension settings, notification conversation history, notification links, and a bounded diagnostic log are stored locally in the extension's `chrome.storage.local` area. Telegram authorization keys and Telegram's peer/update cache are stored in extension-owned IndexedDB by the bundled MTProto client.
+Telegram API credentials, extension settings, notification conversation history, notification links, a popup inbox of up to 100 recent matched messages, and a bounded diagnostic log are stored locally in the extension's `chrome.storage.local` area. Each popup inbox entry contains its timestamp, chat/sender source, message preview, and Telegram link. Telegram authorization keys and Telegram's peer/update cache are stored in extension-owned IndexedDB by the bundled MTProto client.
 
 The diagnostic log does not include message text, phone numbers, login codes, two-step passwords, API hashes, or Telegram authorization keys.
 
@@ -32,7 +32,7 @@ Data is not sold, rented, or shared with advertisers or data brokers. Data is ex
 
 ## Retention, export, and deletion
 
-Settings remain in the current Chrome profile until the user changes them, clears extension data, or removes the extension. The user can import or export Android-compatible settings JSON and export diagnostic logs from the options page. Logging out revokes the active Telegram authorization used by the extension. Removing the extension deletes its Chrome-owned local storage and IndexedDB data.
+Settings remain in the current Chrome profile until the user changes them, clears extension data, or removes the extension. Popup inbox entries remain until the user dismisses an individual entry, selects Dismiss all, clears extension data, or removes the extension. The user can import or export Android-compatible settings JSON and export diagnostic logs from the options page. Logging out revokes the active Telegram authorization used by the extension. Removing the extension deletes its Chrome-owned local storage and IndexedDB data.
 
 If the user explicitly backs up settings to Saved Messages, that backup remains in the user's Telegram account until the user deletes it in Telegram.
 

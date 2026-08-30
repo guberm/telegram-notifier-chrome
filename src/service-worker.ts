@@ -1,11 +1,12 @@
 import { DEFAULT_CONFIG, normalizeConfig, type AppConfig, type NotificationEvent } from './shared/config'
+import { addInboxItem, dismissInboxItem, type InboxItem } from './shared/inbox'
 import { evaluateNotification, formatPreview, notificationTitle } from './shared/notification-policy'
 import { notificationKey } from './shared/telegram-mapper'
 import type { AppState, BackgroundMessage, Credentials, LogEntry, OffscreenMessage, RuntimeState } from './shared/protocol'
 
 const KEYS = {
   config: 'config', credentials: 'credentials', runtimeState: 'runtimeState', logs: 'logs',
-  unreadCount: 'unreadCount', histories: 'notificationHistories', links: 'notificationLinks'
+  unreadCount: 'unreadCount', histories: 'notificationHistories', links: 'notificationLinks', inbox: 'notificationInbox'
 } as const
 const ALARM = 'runtime-health'
 const DEFAULT_RUNTIME: RuntimeState = { status: 'unconfigured', userName: '', error: '', updatedAt: 0 }
@@ -19,6 +20,29 @@ async function appendLog(level: LogEntry['level'], message: string): Promise<voi
   const stored = await chrome.storage.local.get({ [KEYS.logs]: [] as LogEntry[] })
   const logs = [...stored[KEYS.logs], { timestamp: Date.now(), level, message }].slice(-300)
   await chrome.storage.local.set({ [KEYS.logs]: logs })
+}
+
+async function setBadge(count: number): Promise<void> {
+  await chrome.action.setBadgeBackgroundColor({ color: '#2563EB' })
+  await chrome.action.setBadgeText({ text: count > 99 ? '99+' : count ? String(count) : '' })
+}
+
+async function saveInbox(inbox: InboxItem[]): Promise<InboxItem[]> {
+  await chrome.storage.local.set({ [KEYS.inbox]: inbox, [KEYS.unreadCount]: inbox.length })
+  await setBadge(inbox.length)
+  return inbox
+}
+
+async function dismissInbox(id: string): Promise<InboxItem[]> {
+  const stored = await chrome.storage.local.get({ [KEYS.inbox]: [] as InboxItem[] })
+  return saveInbox(dismissInboxItem(stored[KEYS.inbox], id))
+}
+
+async function openInbox(id: string): Promise<void> {
+  const stored = await chrome.storage.local.get({ [KEYS.inbox]: [] as InboxItem[] })
+  const item = stored[KEYS.inbox].find((entry: InboxItem) => entry.id === id)
+  if (!item || !/^https:\/\/(t\.me|web\.telegram\.org)\//.test(item.url)) throw new Error('Telegram message link is unavailable')
+  await chrome.tabs.create({ url: item.url })
 }
 
 async function ensureOffscreen(): Promise<void> {
@@ -65,14 +89,15 @@ async function processTelegramEvent(event: NotificationEvent): Promise<void> {
   const stored = await chrome.storage.local.get({
     [KEYS.histories]: {} as Record<string, Array<{ title: string; message: string }>>,
     [KEYS.links]: {} as Record<string, string>,
-    [KEYS.unreadCount]: 0
+    [KEYS.inbox]: [] as InboxItem[]
   })
   const histories = stored[KEYS.histories]
   const links = stored[KEYS.links]
   histories[id] = [...(histories[id] ?? []), { title: event.senderName || event.chatTitle, message: preview }].slice(-6)
   links[id] = event.url
-  const unreadCount = Math.min(999, stored[KEYS.unreadCount] + 1)
-  await chrome.storage.local.set({ [KEYS.histories]: histories, [KEYS.links]: links, [KEYS.unreadCount]: unreadCount })
+  const inbox = addInboxItem(stored[KEYS.inbox], event)
+  await chrome.storage.local.set({ [KEYS.histories]: histories, [KEYS.links]: links })
+  await saveInbox(inbox)
 
   const options: chrome.notifications.NotificationCreateOptions = config.showMessagePreviews
     ? {
@@ -84,8 +109,6 @@ async function processTelegramEvent(event: NotificationEvent): Promise<void> {
         message: 'Open the notification to view details.', priority: 2
       }
   await chrome.notifications.create(id, options)
-  await chrome.action.setBadgeBackgroundColor({ color: '#2563EB' })
-  await chrome.action.setBadgeText({ text: unreadCount > 99 ? '99+' : String(unreadCount) })
   await appendLog('info', `${title}: notification shown`)
 }
 
@@ -94,7 +117,7 @@ async function getAppState(): Promise<AppState> {
     [KEYS.config]: DEFAULT_CONFIG,
     [KEYS.runtimeState]: DEFAULT_RUNTIME,
     [KEYS.logs]: [] as LogEntry[],
-    [KEYS.unreadCount]: 0
+    [KEYS.inbox]: [] as InboxItem[]
   })
   const credentials = (await chrome.storage.local.get(KEYS.credentials))[KEYS.credentials] as Credentials | undefined
   return {
@@ -102,7 +125,8 @@ async function getAppState(): Promise<AppState> {
     credentials,
     runtimeState: stored[KEYS.runtimeState] as RuntimeState,
     logs: stored[KEYS.logs] as LogEntry[],
-    unreadCount: stored[KEYS.unreadCount] as number
+    inbox: stored[KEYS.inbox] as InboxItem[],
+    unreadCount: (stored[KEYS.inbox] as InboxItem[]).length
   }
 }
 
@@ -112,11 +136,17 @@ chrome.runtime.onInstalled.addListener((details) => {
     if (!stored[KEYS.config]) await chrome.storage.local.set({ [KEYS.config]: DEFAULT_CONFIG, [KEYS.runtimeState]: DEFAULT_RUNTIME })
     await chrome.alarms.create(ALARM, { periodInMinutes: 0.5 })
     await initializeRuntime()
+    const inbox = (await chrome.storage.local.get({ [KEYS.inbox]: [] as InboxItem[] }))[KEYS.inbox]
+    await setBadge(inbox.length)
     if (details.reason === 'install') await chrome.runtime.openOptionsPage()
   })()
 })
 
-chrome.runtime.onStartup.addListener(() => { void initializeRuntime() })
+chrome.runtime.onStartup.addListener(() => { void (async () => {
+  await initializeRuntime()
+  const inbox = (await chrome.storage.local.get({ [KEYS.inbox]: [] as InboxItem[] }))[KEYS.inbox]
+  await setBadge(inbox.length)
+})() })
 chrome.alarms.onAlarm.addListener((alarm) => { if (alarm.name === ALARM) void initializeRuntime() })
 
 chrome.notifications.onClicked.addListener((id) => {
@@ -150,7 +180,9 @@ chrome.runtime.onMessage.addListener((message: BackgroundMessage, _sender, sendR
           sendResponse({ ok: true })
           break
         case 'CLEAR_LOGS': await chrome.storage.local.set({ [KEYS.logs]: [] }); sendResponse({ ok: true }); break
-        case 'MARK_SEEN': await chrome.storage.local.set({ [KEYS.unreadCount]: 0 }); await chrome.action.setBadgeText({ text: '' }); sendResponse({ ok: true }); break
+        case 'DISMISS_INBOX_ITEM': sendResponse({ ok: true, data: await dismissInbox(message.id) }); break
+        case 'DISMISS_ALL_INBOX': sendResponse({ ok: true, data: await saveInbox([]) }); break
+        case 'OPEN_INBOX_ITEM': await openInbox(message.id); sendResponse({ ok: true }); break
         case 'OFFSCREEN_READY': await initializeRuntime(); sendResponse({ ok: true }); break
         case 'RUNTIME_STATE': await chrome.storage.local.set({ [KEYS.runtimeState]: message.state }); sendResponse({ ok: true }); break
         case 'TELEGRAM_EVENT': await processTelegramEvent(message.event); sendResponse({ ok: true }); break

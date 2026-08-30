@@ -1,4 +1,5 @@
 import type { AppConfig, NotificationEvent } from './config'
+import type { InboxItem } from './inbox'
 import type { AppChatType } from './telegram-mapper'
 
 export interface Credentials {
@@ -33,6 +34,7 @@ export interface AppState {
   credentials?: Credentials
   runtimeState: RuntimeState
   logs: LogEntry[]
+  inbox: InboxItem[]
   unreadCount: number
 }
 
@@ -43,7 +45,9 @@ export type BackgroundMessage =
   | { target: 'background'; type: 'RUNTIME_COMMAND'; command: string; payload?: unknown }
   | { target: 'background'; type: 'TEST_NOTIFICATION' }
   | { target: 'background'; type: 'CLEAR_LOGS' }
-  | { target: 'background'; type: 'MARK_SEEN' }
+  | { target: 'background'; type: 'DISMISS_INBOX_ITEM'; id: string }
+  | { target: 'background'; type: 'DISMISS_ALL_INBOX' }
+  | { target: 'background'; type: 'OPEN_INBOX_ITEM'; id: string }
   | { target: 'background'; type: 'OFFSCREEN_READY' }
   | { target: 'background'; type: 'RUNTIME_STATE'; state: RuntimeState }
   | { target: 'background'; type: 'TELEGRAM_EVENT'; event: NotificationEvent }

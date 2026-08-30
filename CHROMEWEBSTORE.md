@@ -21,6 +21,7 @@ FEATURES
 • Choose incoming, outgoing, both, or muted notification direction globally or per chat
 • Apply quiet hours, text filters, regular expressions, mentions, sender IDs, topic IDs, and required keywords
 • Show optional message previews, media labels, and forum topic names
+• Review up to 100 recent matched messages in the popup with date, source, dismiss controls, and Telegram links
 • Import or export Android-compatible settings JSON and back up settings to Saved Messages
 • Keep a local diagnostic log without message contents or authentication secrets
 
@@ -40,7 +41,7 @@ Storage keeps local credentials, settings, state, and logs. Notifications displa
 SUPPORT
 Report issues at https://github.com/guberm/telegram-notifier-chrome/issues or email michael@guber.dev.
 
-Version 1.1.0 — New icon and name, plus quick Android-compatible settings import/export from the popup.
+Version 1.2.0 — Added a local popup inbox with date, source, message preview, dismiss controls, and Telegram links.
 
 **Category**
 
@@ -67,11 +68,13 @@ English
 
 Screenshot 1 shows the account status, notification controls, quiet hours, suppression filters, and chat-selection interface. It must not show a real phone number, API Hash, login code, password, message content, or private chat name.
 
+Screenshot 2 should show the popup inbox using synthetic dates, sources, and message text only.
+
 ## Permissions Justification
 
 | Permission | Type | Justification |
 |------------|------|---------------|
-| `storage` | permissions | Stores the user-supplied Telegram API credentials, local authorization state, selected chat IDs, notification rules, bounded diagnostic log, and notification conversation state in the current Chrome profile. |
+| `storage` | permissions | Stores the user-supplied Telegram API credentials, local authorization state, selected chat IDs, notification rules, up to 100 recent popup inbox entries, bounded diagnostic log, and notification conversation state in the current Chrome profile. |
 | `notifications` | permissions | Displays a Chrome desktop notification when a selected Telegram message passes the user's local rules and provides the test-notification feature. |
 | `offscreen` | permissions | Hosts the extension-owned document that spawns the local Telegram MTProto Web Worker without opening a visible tab or window. |
 | `alarms` | permissions | Periodically verifies that the local Telegram runtime is available while Chrome is running because Manifest V3 service workers are not persistent. |
@@ -124,6 +127,7 @@ https://github.com/guberm/telegram-notifier-chrome/blob/main/PRIVACY.md
 
 | Version | Date | Changes | Status |
 |---------|------|---------|--------|
+| 1.2.0 | 2026-08-30 | Popup message inbox with date, source, preview, per-item and dismiss-all controls, and Telegram links | GitHub release |
 | 1.1.0 | 2026-08-30 | Rename, supplied icon, quick Android-compatible settings import/export in the popup, legacy backup restore | GitHub release |
 | 1.0.0 | 2026-08-30 | Initial direct-MTProto notification release | GitHub release |
 
