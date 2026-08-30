@@ -1,0 +1,23 @@
+{
+  "name": "custom-chat-notifier",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "build": "vite build",
+    "check": "npm run test && npm run typecheck && npm run build",
+    "package": "powershell -ExecutionPolicy Bypass -File scripts/package.ps1"
+  },
+  "dependencies": {
+    "@mtcute/web": "0.32.1"
+  },
+  "devDependencies": {
+    "@types/chrome": "0.1.7",
+    "@types/node": "24.3.0",
+    "typescript": "5.9.2",
+    "vite": "8.2.2",
+    "vitest": "4.1.11"
+  }
+}

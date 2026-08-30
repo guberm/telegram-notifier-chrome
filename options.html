@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Chat Notifier</title>
+    <link rel="stylesheet" href="/src/ui.css">
+  </head>
+  <body>
+    <main class="shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">LOCAL TELEGRAM NOTIFICATIONS</p>
+          <h1>Custom Chat Notifier</h1>
+          <p>Choose exactly which chats can notify you and apply local rules before Chrome shows anything.</p>
+        </div>
+        <div class="status-card" aria-live="polite">
+          <span id="status-dot" class="status-dot"></span>
+          <div><strong id="status-title">Loading…</strong><small id="status-detail"></small></div>
+        </div>
+      </header>
+
+      <section class="card" aria-labelledby="account-title">
+        <div class="section-heading"><div><p class="step">01</p><h2 id="account-title">Telegram account</h2></div><a href="https://my.telegram.org/apps" target="_blank" rel="noreferrer">Get API credentials ↗</a></div>
+        <div class="grid two">
+          <label>API ID<input id="api-id" inputmode="numeric" autocomplete="off" placeholder="123456"></label>
+          <label>API Hash<input id="api-hash" type="password" autocomplete="off" placeholder="32-character API hash"></label>
+        </div>
+        <div class="actions"><button id="save-connect" class="primary">Save and connect</button><button id="disconnect">Disconnect</button><button id="logout" class="danger">Log out</button></div>
+        <div class="auth-grid">
+          <label>Phone number<input id="phone" autocomplete="tel" placeholder="+1234567890"></label><button id="send-code">Send code</button>
+          <label>Telegram code<input id="code" inputmode="numeric" autocomplete="one-time-code"></label><button id="sign-in">Sign in</button>
+          <label>Two-step password<input id="password" type="password" autocomplete="current-password"></label><button id="check-password">Submit password</button>
+        </div>
+        <p class="hint">Credentials, your encrypted Telegram session, settings, and message previews stay in this Chrome profile. No developer server is used.</p>
+      </section>
+
+      <section class="card" aria-labelledby="notifications-title">
+        <div class="section-heading"><div><p class="step">02</p><h2 id="notifications-title">Notification rules</h2></div><button id="test-notification">Send test</button></div>
+        <div class="switch-row"><div><strong>Notifications</strong><span>Master switch for all selected chats</span></div><input id="notifications-enabled" type="checkbox" role="switch"></div>
+        <div class="switch-row"><div><strong>Message previews</strong><span>Show sender and message text in Chrome notifications</span></div><input id="message-previews" type="checkbox" role="switch"></div>
+        <div class="grid two compact">
+          <label>Global direction<select id="global-direction"><option value="incoming">Incoming only</option><option value="outgoing">Outgoing only</option><option value="both">Both directions</option><option value="none">None</option></select></label>
+          <div class="quiet-control"><label class="inline-check"><input id="quiet-enabled" type="checkbox">Quiet hours</label><label>Start<input id="quiet-start" type="time"></label><label>End<input id="quiet-end" type="time"></label></div>
+        </div>
+        <div class="grid two">
+          <label>Hide messages containing<textarea id="text-filters" rows="5" placeholder="One text filter per line"></textarea></label>
+          <label>Hide messages matching regex<textarea id="regex-filters" rows="5" placeholder="One regular expression per line"></textarea></label>
+        </div>
+        <div class="actions"><button id="save-rules" class="primary">Save notification rules</button></div>
+      </section>
+
+      <section class="card" aria-labelledby="chats-title">
+        <div class="section-heading"><div><p class="step">03</p><h2 id="chats-title">Chats</h2></div><button id="refresh-chats">Refresh from Telegram</button></div>
+        <div class="chat-tools"><input id="chat-search" type="search" placeholder="Search chats…" aria-label="Search chats"><select id="chat-type" aria-label="Filter chat type"><option value="all">All types</option><option value="user">Chats</option><option value="group">Groups</option><option value="channel">Channels</option><option value="bot">Bots</option></select><label class="inline-check"><input id="selected-only" type="checkbox">Selected only</label></div>
+        <p id="chat-summary" class="hint">Connect Telegram and refresh chats.</p>
+        <div id="chat-list" class="chat-list" aria-live="polite"></div>
+      </section>
+
+      <section class="card" aria-labelledby="data-title">
+        <div class="section-heading"><div><p class="step">04</p><h2 id="data-title">Backup and diagnostics</h2></div></div>
+        <div class="actions wrap"><button id="export-settings">Export JSON</button><label class="file-button">Import JSON<input id="import-settings" type="file" accept="application/json,.json"></label><button id="backup-saved">Back up to Saved Messages</button><button id="restore-saved">Restore from Saved Messages</button></div>
+        <div class="section-heading sub"><h3>Local diagnostic log</h3><div class="actions"><button id="export-logs">Export log</button><button id="clear-logs">Clear</button></div></div>
+        <pre id="logs" class="logs">No events yet.</pre>
+      </section>
+    </main>
+
+    <dialog id="rule-dialog">
+      <form method="dialog" class="dialog-form">
+        <div class="section-heading"><h2 id="dialog-title">Advanced rules</h2><button value="cancel" class="icon-button" aria-label="Close">×</button></div>
+        <label class="inline-check"><input id="rule-mentions" type="checkbox">Mentions only</label>
+        <label>Allowed sender IDs<input id="rule-senders" placeholder="42, 84"></label>
+        <label>Allowed topic/thread IDs<input id="rule-threads" placeholder="7, 9"></label>
+        <label>Required keywords<textarea id="rule-keywords" rows="4" placeholder="One required keyword per line"></textarea></label>
+        <div class="actions"><button id="save-chat-rule" value="default" class="primary">Save rules</button><button value="cancel">Cancel</button></div>
+      </form>
+    </dialog>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="/src/options.ts"></script>
+  </body>
+</html>
