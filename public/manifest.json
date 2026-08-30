@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Telegram Custom Notifier",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Shows filtered desktop notifications for selected chats from a locally connected Telegram account.",
   "minimum_chrome_version": "116",
   "permissions": ["storage", "notifications", "offscreen", "alarms"],

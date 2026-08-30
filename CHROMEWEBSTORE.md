@@ -41,7 +41,7 @@ Storage keeps local credentials, settings, state, and logs. Notifications displa
 SUPPORT
 Report issues at https://github.com/guberm/telegram-notifier-chrome/issues or email michael@guber.dev.
 
-Version 1.2.0 — Added a local popup inbox with date, source, message preview, dismiss controls, and Telegram links.
+Version 1.2.1 — Shows actual message text for all Telegram message types and includes every saved selected chat in the filtered chat list, marking chats no longer returned by Telegram as unavailable.
 
 **Category**
 
@@ -127,6 +127,7 @@ https://github.com/guberm/telegram-notifier-chrome/blob/main/PRIVACY.md
 
 | Version | Date | Changes | Status |
 |---------|------|---------|--------|
+| 1.2.1 | 2026-08-30 | Actual text for fallback message types; every saved selected chat remains visible, including unavailable entries | GitHub release |
 | 1.2.0 | 2026-08-30 | Popup message inbox with date, source, preview, per-item and dismiss-all controls, and Telegram links | GitHub release |
 | 1.1.0 | 2026-08-30 | Rename, supplied icon, quick Android-compatible settings import/export in the popup, legacy backup restore | GitHub release |
 | 1.0.0 | 2026-08-30 | Initial direct-MTProto notification release | GitHub release |

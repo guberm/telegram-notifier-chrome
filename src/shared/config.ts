@@ -110,13 +110,15 @@ export function normalizeConfig(value: unknown): AppConfig {
   const rawQuiet = input.quietHours && typeof input.quietHours === 'object'
     ? input.quietHours as Record<string, unknown>
     : {}
+  const selectedChatIds = cleanIds(input.selectedChatIds)
+  const selected = new Set(selectedChatIds)
 
   return {
     version: 1,
     notificationsEnabled: input.notificationsEnabled === undefined ? true : input.notificationsEnabled === true,
     showMessagePreviews: input.showMessagePreviews === undefined ? true : input.showMessagePreviews === true,
-    selectedChatIds: cleanIds(input.selectedChatIds),
-    hiddenChatIds: cleanIds(input.hiddenChatIds),
+    selectedChatIds,
+    hiddenChatIds: cleanIds(input.hiddenChatIds).filter((id) => !selected.has(id)),
     globalDirection: direction(input.globalDirection, 'incoming'),
     chatDirections,
     textFilters: cleanStrings(input.textFilters),

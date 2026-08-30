@@ -1,7 +1,7 @@
 import { InputMedia, TelegramClient, type Message, type TelegramClient as TelegramClientType } from '@mtcute/web'
 import { isSettingsBackupFile, SETTINGS_BACKUP_FILE, type NotificationEvent } from './shared/config'
 import type { BackgroundMessage, ChatInfo, Credentials, OffscreenMessage, RuntimeState } from './shared/protocol'
-import { chatType, mediaKind, messageUrl } from './shared/telegram-mapper'
+import { chatType, mediaKind, messageUrl, missingChatIds, unavailableChat } from './shared/telegram-mapper'
 
 let client: TelegramClientType | null = null
 let credentialsKey = ''
@@ -81,19 +81,30 @@ async function initialize(credentials: Credentials): Promise<void> {
   try { await markConnected() } catch { await setState('disconnected') }
 }
 
-async function listChats(): Promise<ChatInfo[]> {
+async function listChats(payload: unknown): Promise<ChatInfo[]> {
+  const requestedIds = Array.isArray((payload as { selectedChatIds?: unknown })?.selectedChatIds)
+    ? (payload as { selectedChatIds: unknown[] }).selectedChatIds.filter((id): id is string => typeof id === 'string')
+    : []
+  const selected = new Set(missingChatIds([], requestedIds))
+  const pending = new Set(selected)
   const chats: ChatInfo[] = []
-  for await (const dialog of requireClient().iterDialogs({ limit: 500, archived: 'keep' })) {
+  let scanned = 0
+  for await (const dialog of requireClient().iterDialogs({ archived: 'keep' })) {
     const peer = dialog.peer
-    chats.push({
-      id: String(peer.id),
+    const id = String(peer.id)
+    scanned += 1
+    pending.delete(id)
+    if (scanned <= 500 || selected.has(id)) chats.push({
+      id,
       title: peer.displayName,
       username: peer.username ?? '',
       type: chatType(peer.type, peer.type === 'user' && peer.isBot, peer.type === 'chat' ? peer.chatType : ''),
       archived: dialog.isArchived,
       muted: dialog.isMuted === true
     })
+    if (scanned >= 500 && pending.size === 0) break
   }
+  chats.push(...[...pending].map(unavailableChat))
   return chats
 }
 
@@ -162,7 +173,7 @@ async function command(name: string, payload: unknown): Promise<unknown> {
       return null
     }
     case 'CHECK_PASSWORD': await tg.checkPassword(String((payload as { password?: string })?.password ?? '')); pendingCode = null; await markConnected(); return null
-    case 'LIST_CHATS': return listChats()
+    case 'LIST_CHATS': return listChats(payload)
     case 'REMOVE_CHAT': await removeChat(payload); return null
     case 'BACKUP_SAVED': await backupToSavedMessages(payload); return null
     case 'RESTORE_SAVED': return restoreFromSavedMessages()

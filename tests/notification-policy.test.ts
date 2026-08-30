@@ -68,6 +68,7 @@ describe('notification presentation', () => {
 
   it('formats media labels and captions', () => {
     expect(formatPreview('text', '')).toBe('New message')
+    expect(formatPreview('other', 'Actual Telegram message')).toBe('Actual Telegram message')
     expect(formatPreview('photo', '')).toBe('📷 Photo')
     expect(formatPreview('document', 'report.pdf')).toBe('📎 Document: report.pdf')
   })

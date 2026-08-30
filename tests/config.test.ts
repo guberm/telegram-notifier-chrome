@@ -14,6 +14,16 @@ describe('normalizeConfig', () => {
     expect(normalizeConfig(undefined)).toEqual(DEFAULT_CONFIG)
   })
 
+  it('keeps selected chats visible when imported hidden IDs overlap', () => {
+    expect(normalizeConfig({
+      selectedChatIds: ['1', '2'],
+      hiddenChatIds: ['2', '3']
+    })).toMatchObject({
+      selectedChatIds: ['1', '2'],
+      hiddenChatIds: ['3']
+    })
+  })
+
   it('normalizes imported settings and drops invalid values', () => {
     expect(normalizeConfig({
       version: 1,

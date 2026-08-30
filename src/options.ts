@@ -83,6 +83,7 @@ function renderChats(): void {
     const row = document.createElement('article')
     row.className = 'chat-row'
     const selected = state.config.selectedChatIds.includes(chat.id)
+    const unavailable = chat.type === 'unavailable'
     row.innerHTML = `<label class="chat-main"><input class="chat-check" type="checkbox" ${selected ? 'checked' : ''}><span class="avatar">${chat.title.trim().charAt(0).toUpperCase() || '?'}</span><span><strong></strong><small></small></span></label><select class="chat-direction" aria-label="Notification direction"><option value="inherit">Inherit global</option><option value="incoming">Incoming</option><option value="outgoing">Outgoing</option><option value="both">Both</option><option value="none">Mute</option></select><button class="chat-rules">Rules</button><button class="chat-remove danger-text">Remove</button>`
     const title = row.querySelector('strong')!
     const detail = row.querySelector('small')!
@@ -93,17 +94,26 @@ function renderChats(): void {
       const ids = new Set(state.config.selectedChatIds)
       checkbox.checked ? ids.add(chat.id) : ids.delete(chat.id)
       state.config.selectedChatIds = [...ids]
+      if (unavailable && !checkbox.checked) chats = chats.filter((item) => item.id !== chat.id)
       void saveConfig('Chat selection saved')
     })
     const direction = row.querySelector<HTMLSelectElement>('.chat-direction')!
     direction.value = state.config.chatDirections[chat.id] ?? 'inherit'
+    direction.disabled = unavailable
     direction.addEventListener('change', () => {
       if (direction.value === 'inherit') delete state.config.chatDirections[chat.id]
       else state.config.chatDirections[chat.id] = direction.value as Direction
       void saveConfig('Chat direction saved')
     })
-    row.querySelector<HTMLButtonElement>('.chat-rules')!.addEventListener('click', () => openRuleDialog(chat))
-    row.querySelector<HTMLButtonElement>('.chat-remove')!.addEventListener('click', () => { void removeChat(chat) })
+    const rules = row.querySelector<HTMLButtonElement>('.chat-rules')!
+    const remove = row.querySelector<HTMLButtonElement>('.chat-remove')!
+    rules.disabled = unavailable
+    remove.disabled = unavailable
+    if (unavailable) remove.textContent = 'Unavailable'
+    else {
+      rules.addEventListener('click', () => openRuleDialog(chat))
+      remove.addEventListener('click', () => { void removeChat(chat) })
+    }
     return row
   }))
   if (visible.length === 0) list.textContent = chats.length ? 'No chats match this filter.' : 'No chats loaded yet.'
@@ -131,7 +141,7 @@ function collectRules(): void {
 async function refreshChats(): Promise<void> {
   element<HTMLButtonElement>('refresh-chats').disabled = true
   try {
-    chats = await send({ target: 'background', type: 'RUNTIME_COMMAND', command: 'LIST_CHATS' }) as ChatInfo[]
+    chats = await send({ target: 'background', type: 'RUNTIME_COMMAND', command: 'LIST_CHATS', payload: { selectedChatIds: state.config.selectedChatIds } }) as ChatInfo[]
     renderChats()
     toast(`Loaded ${chats.length} chats`)
   } finally { element<HTMLButtonElement>('refresh-chats').disabled = false }

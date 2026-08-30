@@ -64,7 +64,7 @@ npm run check
 npm run package
 ```
 
-`npm run check` runs 21 focused tests, TypeScript validation, and the production Vite build. The package script creates a clean ZIP from `dist/` under `release-artifacts/` and prints its SHA-256.
+`npm run check` runs 23 focused tests, TypeScript validation, and the production Vite build. The package script creates a clean ZIP from `dist/` under `release-artifacts/` and prints its SHA-256.
 
 ## Architecture
 

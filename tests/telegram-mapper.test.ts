@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { chatType, mediaKind, messageUrl, notificationKey } from '../src/shared/telegram-mapper'
+import { chatType, mediaKind, messageUrl, missingChatIds, notificationKey, unavailableChat } from '../src/shared/telegram-mapper'
 
 describe('telegram message mapping', () => {
   it('maps Telegram media into notification kinds', () => {
@@ -26,5 +26,17 @@ describe('telegram message mapping', () => {
     expect(chatType('user', true)).toBe('bot')
     expect(chatType('chat', false, 'supergroup')).toBe('group')
     expect(chatType('chat', false, 'channel')).toBe('channel')
+  })
+
+  it('finds selected chats missing from the dialog page', () => {
+    expect(missingChatIds(['1', '2'], ['2', '3', '3', '4'])).toEqual(['3', '4'])
+    expect(unavailableChat('3')).toEqual({
+      id: '3',
+      title: 'Selected chat unavailable',
+      username: '',
+      type: 'unavailable',
+      archived: false,
+      muted: false
+    })
   })
 })

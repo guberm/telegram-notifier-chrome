@@ -1,6 +1,6 @@
 import type { MessageKind } from './config'
 
-export type AppChatType = 'user' | 'group' | 'channel' | 'bot'
+export type AppChatType = 'user' | 'group' | 'channel' | 'bot' | 'unavailable'
 
 export function mediaKind(type?: string, animated = false): MessageKind {
   if (!type) return 'text'
@@ -25,4 +25,13 @@ export function notificationKey(chatId: string, threadId: string, senderId: stri
 export function chatType(peerType: 'user' | 'chat', isBot: boolean, telegramChatType = ''): AppChatType {
   if (peerType === 'user') return isBot ? 'bot' : 'user'
   return telegramChatType === 'channel' ? 'channel' : 'group'
+}
+
+export function missingChatIds(loadedIds: string[], selectedIds: string[]): string[] {
+  const loaded = new Set(loadedIds)
+  return [...new Set(selectedIds)].filter((id) => !loaded.has(id))
+}
+
+export function unavailableChat(id: string) {
+  return { id, title: 'Selected chat unavailable', username: '', type: 'unavailable' as const, archived: false, muted: false }
 }

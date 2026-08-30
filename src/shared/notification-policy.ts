@@ -54,7 +54,7 @@ const labels: Record<Exclude<MessageKind, 'text'>, string> = {
 
 export function formatPreview(kind: MessageKind, caption: string): string {
   const clean = caption.trim()
-  if (kind === 'text') return clean || 'New message'
+  if (kind === 'text' || kind === 'other') return clean || 'New message'
   const label = labels[kind]
-  return clean && kind !== 'other' ? `${label}: ${clean}` : label
+  return clean ? `${label}: ${clean}` : label
 }
