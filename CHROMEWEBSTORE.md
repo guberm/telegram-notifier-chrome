@@ -124,7 +124,7 @@ https://github.com/guberm/telegram-notifier-chrome/blob/main/PRIVACY.md
 
 | Version | Date | Changes | Status |
 |---------|------|---------|--------|
-| 1.1.0 | 2026-08-30 | Rename, supplied icon, quick Android-compatible settings import/export in the popup, legacy backup restore | Prepared |
+| 1.1.0 | 2026-08-30 | Rename, supplied icon, quick Android-compatible settings import/export in the popup, legacy backup restore | GitHub release |
 | 1.0.0 | 2026-08-30 | Initial direct-MTProto notification release | GitHub release |
 
 ## Review Notes
