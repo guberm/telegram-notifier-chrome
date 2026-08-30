@@ -20,8 +20,17 @@
         </div>
       </header>
 
+      <section class="card" aria-labelledby="interface-title">
+        <div class="section-heading"><div><p class="step">01</p><h2 id="interface-title">Interface</h2></div></div>
+        <div class="grid two compact">
+          <label>Theme<select id="theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
+          <label>Message view<select id="message-view"><option value="popup">Popup</option><option value="side-panel">Side panel</option></select></label>
+        </div>
+        <p class="hint">Changes apply immediately. The side panel stays open while you browse; the popup is best for quick checks.</p>
+      </section>
+
       <section class="card" aria-labelledby="account-title">
-        <div class="section-heading"><div><p class="step">01</p><h2 id="account-title">Telegram account</h2></div><a href="https://my.telegram.org/apps" target="_blank" rel="noreferrer">Get API credentials ↗</a></div>
+        <div class="section-heading"><div><p class="step">02</p><h2 id="account-title">Telegram account</h2></div><a href="https://my.telegram.org/apps" target="_blank" rel="noreferrer">Get API credentials ↗</a></div>
         <div class="grid two">
           <label>API ID<input id="api-id" inputmode="numeric" autocomplete="off" placeholder="123456"></label>
           <label>API Hash<input id="api-hash" type="password" autocomplete="off" placeholder="32-character API hash"></label>
@@ -36,7 +45,7 @@
       </section>
 
       <section class="card" aria-labelledby="notifications-title">
-        <div class="section-heading"><div><p class="step">02</p><h2 id="notifications-title">Notification rules</h2></div><button id="test-notification">Send test</button></div>
+        <div class="section-heading"><div><p class="step">03</p><h2 id="notifications-title">Notification rules</h2></div><button id="test-notification">Send test</button></div>
         <div class="switch-row"><div><strong>Notifications</strong><span>Master switch for all selected chats</span></div><input id="notifications-enabled" type="checkbox" role="switch"></div>
         <div class="switch-row"><div><strong>Message previews</strong><span>Show sender and message text in Chrome notifications</span></div><input id="message-previews" type="checkbox" role="switch"></div>
         <div class="grid two compact">
@@ -51,14 +60,14 @@
       </section>
 
       <section class="card" aria-labelledby="chats-title">
-        <div class="section-heading"><div><p class="step">03</p><h2 id="chats-title">Chats</h2></div><button id="refresh-chats">Refresh from Telegram</button></div>
+        <div class="section-heading"><div><p class="step">04</p><h2 id="chats-title">Chats</h2></div><button id="refresh-chats">Refresh from Telegram</button></div>
         <div class="chat-tools"><input id="chat-search" type="search" placeholder="Search chats…" aria-label="Search chats"><select id="chat-type" aria-label="Filter chat type"><option value="all">All types</option><option value="user">Chats</option><option value="group">Groups</option><option value="channel">Channels</option><option value="bot">Bots</option></select><label class="inline-check"><input id="selected-only" type="checkbox">Selected only</label></div>
         <p id="chat-summary" class="hint">Connect Telegram and refresh chats.</p>
         <div id="chat-list" class="chat-list" aria-live="polite"></div>
       </section>
 
       <section class="card" aria-labelledby="data-title">
-        <div class="section-heading"><div><p class="step">04</p><h2 id="data-title">Backup and diagnostics</h2></div></div>
+        <div class="section-heading"><div><p class="step">05</p><h2 id="data-title">Backup and diagnostics</h2></div></div>
         <div class="actions wrap"><button id="export-settings">Export JSON</button><label class="file-button">Import JSON<input id="import-settings" type="file" accept="application/json,.json"></label><button id="backup-saved">Back up to Saved Messages</button><button id="restore-saved">Restore from Saved Messages</button></div>
         <div class="section-heading sub"><h3>Local diagnostic log</h3><div class="actions"><button id="export-logs">Export log</button><button id="clear-logs">Clear</button></div></div>
         <pre id="logs" class="logs">No events yet.</pre>

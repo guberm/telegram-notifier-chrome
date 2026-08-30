@@ -1,8 +1,11 @@
-import { exportConfig, importConfig, SETTINGS_BACKUP_FILE } from './shared/config'
+import { exportConfig, importConfig, normalizeConfig, SETTINGS_BACKUP_FILE } from './shared/config'
 import type { InboxItem } from './shared/inbox'
 import type { AppState, BackgroundMessage } from './shared/protocol'
+import { applyTheme } from './shared/theme'
 
 const get = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T
+const sidePanel = location.pathname.endsWith('/sidepanel.html')
+document.body.classList.toggle('side-panel-body', sidePanel)
 
 async function send(message: BackgroundMessage): Promise<unknown> {
   const response = await chrome.runtime.sendMessage(message) as { ok: boolean; data?: unknown; error?: string }
@@ -47,7 +50,7 @@ function renderInbox(state: AppState): void {
     message.textContent = item.message
     open.append(date, source, message)
     open.addEventListener('click', () => { void (async () => {
-      try { await send({ target: 'background', type: 'OPEN_INBOX_ITEM', id: item.id }); window.close() } catch (error) { showError(error) }
+      try { await send({ target: 'background', type: 'OPEN_INBOX_ITEM', id: item.id }); if (!sidePanel) window.close() } catch (error) { showError(error) }
     })() })
     const dismiss = document.createElement('button')
     dismiss.className = 'small danger'
@@ -67,6 +70,7 @@ function renderInbox(state: AppState): void {
 
 void (async () => {
   const state = await send({ target: 'background', type: 'GET_APP_STATE' }) as AppState
+  applyTheme(state.config.theme)
   get('popup-status').textContent = state.runtimeState.status === 'connected' ? `Connected · ${state.runtimeState.userName}` : state.runtimeState.status.replaceAll('-', ' ')
   get('popup-selected').textContent = `${state.config.selectedChatIds.length} chats selected`
   get<HTMLInputElement>('popup-enabled').checked = state.config.notificationsEnabled
@@ -75,6 +79,12 @@ void (async () => {
     if (area === 'local' && changes.notificationInbox) {
       state.inbox = changes.notificationInbox.newValue ?? []
       renderInbox(state)
+    }
+    if (area === 'local' && changes.config) {
+      state.config = normalizeConfig(changes.config.newValue)
+      applyTheme(state.config.theme)
+      get('popup-selected').textContent = `${state.config.selectedChatIds.length} chats selected`
+      get<HTMLInputElement>('popup-enabled').checked = state.config.notificationsEnabled
     }
   })
 
@@ -98,6 +108,7 @@ void (async () => {
       if (file.size > 1_000_000) throw new Error('Choose a JSON file smaller than 1 MB')
       state.config = importConfig(JSON.parse(await file.text()))
       await send({ target: 'background', type: 'SAVE_CONFIG', config: state.config })
+      applyTheme(state.config.theme)
       get('popup-selected').textContent = `${state.config.selectedChatIds.length} chats selected`
       get<HTMLInputElement>('popup-enabled').checked = state.config.notificationsEnabled
       get('popup-status').textContent = 'Settings imported'

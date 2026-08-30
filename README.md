@@ -17,6 +17,8 @@ The extension is independent, open source, and not affiliated with or endorsed b
 - Separate notification conversations by chat, topic, and sender.
 - Notification clicks open a Telegram message link when available; private conversations fall back to Telegram Web.
 - Popup inbox with date, chat/sender source, message preview, per-message dismissal, dismiss-all, and Telegram links.
+- User-selectable popup or persistent Chrome side-panel inbox.
+- System, light, and dark appearance modes across the popup, side panel, and settings.
 - Android-compatible JSON settings import/export and settings backup/restore through Saved Messages, with legacy Chrome backup support.
 - Leave groups/channels, delete private history, and optionally block bots.
 - Local health state, test notification, unread badge, and exportable diagnostic log without message contents.
@@ -64,7 +66,7 @@ npm run check
 npm run package
 ```
 
-`npm run check` runs 23 focused tests, TypeScript validation, and the production Vite build. The package script creates a clean ZIP from `dist/` under `release-artifacts/` and prints its SHA-256.
+`npm run check` runs 25 focused tests, TypeScript validation, and the production Vite build. The package script creates a clean ZIP from `dist/` under `release-artifacts/` and prints its SHA-256.
 
 ## Architecture
 
@@ -72,7 +74,7 @@ npm run package
 - `offscreen.ts` is a minimal `chrome.runtime` bridge and spawns the Worker required by its declared offscreen reason.
 - `telegram-worker.ts` runs `@mtcute/web`, WebSocket transport, IndexedDB session storage, Telegram authorization, dialogs, and message updates.
 - `options.ts` provides account setup, chat selection, rules, backups, and diagnostics.
-- `popup.ts` exposes the local message inbox, Telegram links, dismiss controls, status, the master switch, test notification, and settings shortcut.
+- `popup.ts` exposes the shared popup/side-panel message inbox, Telegram links, dismiss controls, status, the master switch, test notification, and settings shortcut.
 
 All executable code, including the MTProto library and WASM crypto modules, is bundled in the extension package. No remotely hosted code is executed.
 

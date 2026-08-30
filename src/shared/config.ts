@@ -1,5 +1,7 @@
 export type Direction = 'incoming' | 'outgoing' | 'both' | 'none'
 export type MessageKind = 'text' | 'photo' | 'video' | 'document' | 'voice' | 'audio' | 'sticker' | 'animation' | 'poll' | 'location' | 'contact' | 'other'
+export type Theme = 'system' | 'light' | 'dark'
+export type MessageView = 'popup' | 'side-panel'
 
 export interface ChatRule {
   mentionsOnly: boolean
@@ -12,6 +14,8 @@ export interface AppConfig {
   version: 1
   notificationsEnabled: boolean
   showMessagePreviews: boolean
+  theme: Theme
+  messageView: MessageView
   selectedChatIds: string[]
   hiddenChatIds: string[]
   globalDirection: Direction
@@ -42,6 +46,8 @@ export const DEFAULT_CONFIG: AppConfig = {
   version: 1,
   notificationsEnabled: true,
   showMessagePreviews: true,
+  theme: 'system',
+  messageView: 'popup',
   selectedChatIds: [],
   hiddenChatIds: [],
   globalDirection: 'incoming',
@@ -56,6 +62,8 @@ export const SETTINGS_BACKUP_FILE = 'telegram_notifier_settings.json'
 const LEGACY_SETTINGS_BACKUP_FILE = 'custom-chat-notifier-settings.json'
 
 const directions = new Set<Direction>(['incoming', 'outgoing', 'both', 'none'])
+const themes = new Set<Theme>(['system', 'light', 'dark'])
+const messageViews = new Set<MessageView>(['popup', 'side-panel'])
 
 function cleanStrings(value: unknown): string[] {
   if (!Array.isArray(value)) return []
@@ -117,6 +125,8 @@ export function normalizeConfig(value: unknown): AppConfig {
     version: 1,
     notificationsEnabled: input.notificationsEnabled === undefined ? true : input.notificationsEnabled === true,
     showMessagePreviews: input.showMessagePreviews === undefined ? true : input.showMessagePreviews === true,
+    theme: themes.has(input.theme as Theme) ? input.theme as Theme : 'system',
+    messageView: messageViews.has(input.messageView as MessageView) ? input.messageView as MessageView : 'popup',
     selectedChatIds,
     hiddenChatIds: cleanIds(input.hiddenChatIds).filter((id) => !selected.has(id)),
     globalDirection: direction(input.globalDirection, 'incoming'),

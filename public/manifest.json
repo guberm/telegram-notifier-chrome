@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
   "name": "Telegram Custom Notifier",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "description": "Shows filtered desktop notifications for selected chats from a locally connected Telegram account.",
   "minimum_chrome_version": "116",
-  "permissions": ["storage", "notifications", "offscreen", "alarms"],
+  "permissions": ["storage", "notifications", "offscreen", "alarms", "sidePanel"],
   "host_permissions": ["https://*.web.telegram.org/*"],
   "background": {
     "service_worker": "service-worker.js",
@@ -21,6 +21,9 @@
     }
   },
   "options_page": "options.html",
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
   "icons": {
     "16": "icons/icon-16.png",
     "32": "icons/icon-32.png",

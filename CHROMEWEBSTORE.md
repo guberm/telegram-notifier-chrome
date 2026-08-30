@@ -21,7 +21,9 @@ FEATURES
 • Choose incoming, outgoing, both, or muted notification direction globally or per chat
 • Apply quiet hours, text filters, regular expressions, mentions, sender IDs, topic IDs, and required keywords
 • Show optional message previews, media labels, and forum topic names
-• Review up to 100 recent matched messages in the popup with date, source, dismiss controls, and Telegram links
+• Review up to 100 recent matched messages with date, source, dismiss controls, and Telegram links
+• Choose a quick popup or a persistent Chrome side panel for the message inbox
+• Use the system appearance or explicitly choose light or dark mode
 • Import or export Android-compatible settings JSON and back up settings to Saved Messages
 • Keep a local diagnostic log without message contents or authentication secrets
 
@@ -36,12 +38,12 @@ PRIVACY
 The extension connects directly from Chrome to Telegram. Credentials, session data, settings, message filtering, and notifications are handled in the current Chrome profile. There is no developer-operated server, analytics, advertising, or telemetry.
 
 PERMISSIONS
-Storage keeps local credentials, settings, state, and logs. Notifications display matched messages. Offscreen and alarms keep the local MTProto Worker available while Chrome is running. Host access is limited to Telegram WebSocket endpoints.
+Storage keeps local credentials, settings, state, and logs. Notifications display matched messages. Side Panel provides the optional persistent inbox. Offscreen and alarms keep the local MTProto Worker available while Chrome is running. Host access is limited to Telegram WebSocket endpoints.
 
 SUPPORT
 Report issues at https://github.com/guberm/telegram-notifier-chrome/issues or email michael@guber.dev.
 
-Version 1.2.1 — Shows actual message text for all Telegram message types and includes every saved selected chat in the filtered chat list, marking chats no longer returned by Telegram as unavailable.
+Version 1.3.0 — Adds system/light/dark themes and lets the user open the message inbox in a popup or persistent Chrome side panel.
 
 **Category**
 
@@ -60,7 +62,7 @@ English
 | Asset | Dimensions | Status | Filename |
 |-------|-----------:|--------|----------|
 | Store Icon | 128×128 PNG | Ready | `public/icons/icon-128.png` |
-| Screenshot 1 | 1280×800 PNG | Ready | `store-assets/screenshot-options.png` |
+| Screenshot 1 | 1280×800 PNG | Needs update | `store-assets/screenshot-options.png` |
 | Screenshot 2 | 1280×800 PNG | Not created | |
 | Small Promo Tile | 440×280 PNG | Not created | |
 
@@ -78,6 +80,7 @@ Screenshot 2 should show the popup inbox using synthetic dates, sources, and mes
 | `notifications` | permissions | Displays a Chrome desktop notification when a selected Telegram message passes the user's local rules and provides the test-notification feature. |
 | `offscreen` | permissions | Hosts the extension-owned document that spawns the local Telegram MTProto Web Worker without opening a visible tab or window. |
 | `alarms` | permissions | Periodically verifies that the local Telegram runtime is available while Chrome is running because Manifest V3 service workers are not persistent. |
+| `sidePanel` | permissions | Shows the same local message inbox in Chrome's persistent side panel when the user selects Side panel instead of Popup. |
 | `https://*.web.telegram.org/*` | host_permissions | Allows the bundled MTProto client to connect directly to Telegram's official WebSocket data-center endpoints. No other websites are accessed. |
 
 ## Privacy & Data Use
@@ -127,6 +130,7 @@ https://github.com/guberm/telegram-notifier-chrome/blob/main/PRIVACY.md
 
 | Version | Date | Changes | Status |
 |---------|------|---------|--------|
+| 1.3.0 | 2026-08-30 | System/light/dark themes and user-selectable popup or persistent side-panel message inbox | GitHub release |
 | 1.2.1 | 2026-08-30 | Actual text for fallback message types; every saved selected chat remains visible, including unavailable entries | GitHub release |
 | 1.2.0 | 2026-08-30 | Popup message inbox with date, source, preview, per-item and dismiss-all controls, and Telegram links | GitHub release |
 | 1.1.0 | 2026-08-30 | Rename, supplied icon, quick Android-compatible settings import/export in the popup, legacy backup restore | GitHub release |

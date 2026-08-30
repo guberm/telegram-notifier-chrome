@@ -14,6 +14,7 @@ export default defineConfig({
       input: {
         options: resolve(root, 'options.html'),
         popup: resolve(root, 'popup.html'),
+        sidepanel: resolve(root, 'sidepanel.html'),
         offscreen: resolve(root, 'offscreen.html'),
         'service-worker': resolve(root, 'src/service-worker.ts')
       },

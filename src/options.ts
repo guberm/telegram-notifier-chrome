@@ -1,5 +1,6 @@
-import { exportConfig, importConfig, normalizeConfig, SETTINGS_BACKUP_FILE, type AppConfig, type ChatRule, type Direction } from './shared/config'
+import { exportConfig, importConfig, normalizeConfig, SETTINGS_BACKUP_FILE, type AppConfig, type ChatRule, type Direction, type MessageView, type Theme } from './shared/config'
 import type { AppState, BackgroundMessage, ChatInfo, Credentials } from './shared/protocol'
+import { applyTheme } from './shared/theme'
 
 const element = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T
 let state: AppState
@@ -38,6 +39,7 @@ function ids(value: string): string[] {
 }
 
 function renderState(): void {
+  applyTheme(state.config.theme)
   const runtime = state.runtimeState
   const connected = runtime.status === 'connected'
   element('status-dot').className = `status-dot ${connected ? 'connected' : runtime.status === 'error' ? 'failed' : ''}`
@@ -47,6 +49,8 @@ function renderState(): void {
   element<HTMLInputElement>('api-hash').value = state.credentials?.apiHash ?? ''
   element<HTMLInputElement>('notifications-enabled').checked = state.config.notificationsEnabled
   element<HTMLInputElement>('message-previews').checked = state.config.showMessagePreviews
+  element<HTMLSelectElement>('theme').value = state.config.theme
+  element<HTMLSelectElement>('message-view').value = state.config.messageView
   element<HTMLSelectElement>('global-direction').value = state.config.globalDirection
   element<HTMLInputElement>('quiet-enabled').checked = state.config.quietHours.enabled
   element<HTMLInputElement>('quiet-start').value = timeValue(state.config.quietHours.startMinutes)
@@ -196,6 +200,15 @@ element('disconnect').addEventListener('click', () => { void run(async () => { a
 element('logout').addEventListener('click', () => { if (confirm('Log out this extension session from Telegram?')) void run(async () => { await send({ target: 'background', type: 'RUNTIME_COMMAND', command: 'LOGOUT' }); toast('Logged out') }) })
 element('test-notification').addEventListener('click', () => { void run(async () => { await send({ target: 'background', type: 'TEST_NOTIFICATION' }); toast('Test notification sent') }) })
 element('save-rules').addEventListener('click', () => { collectRules(); void run(() => saveConfig()) })
+element<HTMLSelectElement>('theme').addEventListener('change', (event) => {
+  state.config.theme = (event.currentTarget as HTMLSelectElement).value as Theme
+  applyTheme(state.config.theme)
+  void run(() => saveConfig('Theme saved'))
+})
+element<HTMLSelectElement>('message-view').addEventListener('change', (event) => {
+  state.config.messageView = (event.currentTarget as HTMLSelectElement).value as MessageView
+  void run(() => saveConfig('Message view saved'))
+})
 element('refresh-chats').addEventListener('click', () => { void run(refreshChats) })
 for (const id of ['chat-search', 'chat-type', 'selected-only']) element(id).addEventListener('input', renderChats)
 
@@ -229,6 +242,7 @@ element('clear-logs').addEventListener('click', () => { void run(async () => { a
 
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area !== 'local') return
+  if (changes.config) { state.config = normalizeConfig(changes.config.newValue); renderState() }
   if (changes.runtimeState) { state.runtimeState = changes.runtimeState.newValue; renderState() }
   if (changes.logs) { state.logs = changes.logs.newValue ?? []; renderLogs() }
 })

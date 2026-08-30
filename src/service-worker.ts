@@ -16,6 +16,12 @@ async function getConfig(): Promise<AppConfig> {
   return normalizeConfig(stored[KEYS.config])
 }
 
+async function applyMessageView(config?: AppConfig): Promise<void> {
+  const sidePanel = (config ?? await getConfig()).messageView === 'side-panel'
+  await chrome.action.setPopup({ popup: sidePanel ? '' : 'popup.html' })
+  await chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: sidePanel })
+}
+
 async function appendLog(level: LogEntry['level'], message: string): Promise<void> {
   const stored = await chrome.storage.local.get({ [KEYS.logs]: [] as LogEntry[] })
   const logs = [...stored[KEYS.logs], { timestamp: Date.now(), level, message }].slice(-300)
@@ -133,7 +139,9 @@ async function getAppState(): Promise<AppState> {
 chrome.runtime.onInstalled.addListener((details) => {
   void (async () => {
     const stored = await chrome.storage.local.get(KEYS.config)
-    if (!stored[KEYS.config]) await chrome.storage.local.set({ [KEYS.config]: DEFAULT_CONFIG, [KEYS.runtimeState]: DEFAULT_RUNTIME })
+    const config = stored[KEYS.config] ? normalizeConfig(stored[KEYS.config]) : DEFAULT_CONFIG
+    if (!stored[KEYS.config]) await chrome.storage.local.set({ [KEYS.config]: config, [KEYS.runtimeState]: DEFAULT_RUNTIME })
+    await applyMessageView(config)
     await chrome.alarms.create(ALARM, { periodInMinutes: 0.5 })
     await initializeRuntime()
     const inbox = (await chrome.storage.local.get({ [KEYS.inbox]: [] as InboxItem[] }))[KEYS.inbox]
@@ -143,6 +151,7 @@ chrome.runtime.onInstalled.addListener((details) => {
 })
 
 chrome.runtime.onStartup.addListener(() => { void (async () => {
+  await applyMessageView()
   await initializeRuntime()
   const inbox = (await chrome.storage.local.get({ [KEYS.inbox]: [] as InboxItem[] }))[KEYS.inbox]
   await setBadge(inbox.length)
@@ -166,6 +175,7 @@ chrome.runtime.onMessage.addListener((message: BackgroundMessage, _sender, sendR
         case 'SAVE_CONFIG': {
           const config = normalizeConfig(message.config)
           await chrome.storage.local.set({ [KEYS.config]: config })
+          await applyMessageView(config)
           sendResponse({ ok: true, data: config })
           break
         }
@@ -195,3 +205,7 @@ chrome.runtime.onMessage.addListener((message: BackgroundMessage, _sender, sendR
   })()
   return true
 })
+
+void (async () => {
+  try { await applyMessageView() } catch (error) { await appendLog('error', `Message view setup failed: ${String(error)}`) }
+})()

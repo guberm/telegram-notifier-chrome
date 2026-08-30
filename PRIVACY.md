@@ -4,7 +4,7 @@ Last updated: August 30, 2026
 
 ## What data the extension handles
 
-Telegram Custom Notifier handles the Telegram API ID and API Hash supplied by the user, Telegram authorization data, selected chat identifiers, notification preferences, message-filter rules, chat metadata, and Telegram message contents needed to evaluate those rules and show local notifications.
+Telegram Custom Notifier handles the Telegram API ID and API Hash supplied by the user, Telegram authorization data, selected chat identifiers, notification and interface preferences, message-filter rules, chat metadata, and Telegram message contents needed to evaluate those rules and show local notifications.
 
 The extension does not request or process general browsing history or content from websites the user visits.
 

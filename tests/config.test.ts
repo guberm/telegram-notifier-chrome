@@ -24,11 +24,24 @@ describe('normalizeConfig', () => {
     })
   })
 
+  it('normalizes appearance and message view preferences', () => {
+    expect(normalizeConfig({ theme: 'dark', messageView: 'side-panel' })).toMatchObject({
+      theme: 'dark',
+      messageView: 'side-panel'
+    })
+    expect(normalizeConfig({ theme: 'invalid', messageView: 'invalid' })).toMatchObject({
+      theme: 'system',
+      messageView: 'popup'
+    })
+  })
+
   it('normalizes imported settings and drops invalid values', () => {
     expect(normalizeConfig({
       version: 1,
       notificationsEnabled: false,
       showMessagePreviews: false,
+      theme: 'system',
+      messageView: 'popup',
       selectedChatIds: [1, '-1002', null],
       hiddenChatIds: ['3'],
       globalDirection: 'BOTH',
@@ -43,6 +56,8 @@ describe('normalizeConfig', () => {
       version: 1,
       notificationsEnabled: false,
       showMessagePreviews: false,
+      theme: 'system',
+      messageView: 'popup',
       selectedChatIds: ['1', '-1002'],
       hiddenChatIds: ['3'],
       globalDirection: 'both',
@@ -77,6 +92,8 @@ describe('normalizeConfig', () => {
       version: 1,
       notificationsEnabled: false,
       showMessagePreviews: false,
+      theme: 'system',
+      messageView: 'popup',
       selectedChatIds: ['1', '-1002'],
       hiddenChatIds: ['3'],
       globalDirection: 'both',

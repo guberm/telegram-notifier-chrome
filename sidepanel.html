@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Telegram Custom Notifier</title><link rel="stylesheet" href="/src/ui.css"></head>
+  <body class="popup-body side-panel-body">
+    <main class="popup">
+      <div class="brand"><img src="/icons/icon-48.png" width="40" height="40" alt=""><div><strong>Telegram Custom Notifier</strong><span id="popup-status">Loading…</span></div></div>
+      <div class="switch-row"><div><strong>Notifications</strong><span id="popup-selected">0 chats selected</span></div><input id="popup-enabled" type="checkbox" role="switch"></div>
+      <section class="popup-inbox" aria-labelledby="popup-inbox-title">
+        <header class="popup-inbox-heading"><div><strong id="popup-inbox-title">Messages</strong><span id="popup-inbox-count">0 messages</span></div><button id="popup-dismiss-all" class="small danger">Dismiss all</button></header>
+        <div id="popup-inbox-list" class="popup-inbox-list" aria-live="polite"></div>
+      </section>
+      <div class="actions vertical">
+        <button id="open-settings" class="primary">Open settings</button>
+        <div class="actions popup-data-actions">
+          <button id="popup-export">Export JSON</button>
+          <label class="file-button">Import JSON<input id="popup-import" type="file" accept="application/json,.json"></label>
+        </div>
+        <button id="popup-test">Send test notification</button>
+      </div>
+    </main>
+    <script type="module" src="/src/popup.ts"></script>
+  </body>
+</html>
