@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Telegram Custom Notifier</title>
+    <link rel="stylesheet" href="/src/ui.css">
+    <link rel="stylesheet" href="/store-assets/capture-showcase.css">
+  </head>
+  <body class="popup-body side-panel-body demo-panel">
+    <main class="popup">
+      <div class="brand"><img src="/icons/icon-48.png" width="40" height="40" alt=""><div><strong>Telegram Custom Notifier</strong><span>Connected · Demo account</span></div></div>
+      <div class="switch-row"><div><strong>Notifications</strong><span>9 chats selected</span></div><input type="checkbox" role="switch" checked></div>
+      <section class="popup-inbox">
+        <header class="popup-inbox-heading"><div><strong>Messages</strong><span>3 messages</span></div><button class="small danger">Dismiss all</button></header>
+        <div class="popup-inbox-list">
+          <details class="popup-inbox-group" open>
+            <summary><strong>Project Updates</strong><span>2 messages</span></summary>
+            <button class="small danger popup-dismiss-source">Dismiss source</button>
+            <article class="popup-inbox-item"><button class="small danger">Dismiss</button><button class="popup-inbox-open"><time>Aug 31, 12:14 PM</time><span class="popup-inbox-message">Release v1.4.0 is ready for review.</span></button></article>
+            <article class="popup-inbox-item"><button class="small danger">Dismiss</button><button class="popup-inbox-open"><time>Aug 31, 11:42 AM</time><span class="popup-inbox-message">Production checks passed.</span></button></article>
+          </details>
+          <details class="popup-inbox-group">
+            <summary><strong>Family Group</strong><span>1 message</span></summary>
+            <button class="small danger popup-dismiss-source">Dismiss source</button>
+            <article class="popup-inbox-item"><button class="small danger">Dismiss</button><button class="popup-inbox-open"><time>Aug 31, 10:05 AM</time><span class="popup-inbox-message">Dinner moved to 7:30 PM.</span></button></article>
+          </details>
+        </div>
+      </section>
+      <div class="actions vertical"><button class="primary">Open settings</button><div class="actions popup-data-actions"><button>Export JSON</button><span class="file-button">Import JSON</span></div><button>Send test notification</button></div>
+    </main>
+  </body>
+</html>

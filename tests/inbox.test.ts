@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { addInboxItem, dismissInboxItem } from '../src/shared/inbox'
+import { addInboxItem, dismissInboxItem, dismissInboxSource, groupInboxBySource } from '../src/shared/inbox'
 import type { NotificationEvent } from '../src/shared/config'
 
 const event: NotificationEvent = {
@@ -37,5 +37,28 @@ describe('popup inbox', () => {
 
     expect(inbox).toHaveLength(100)
     expect(inbox[0].id).toBe('-1001:100')
+  })
+
+  it('groups messages by source without changing their order', () => {
+    const items = [
+      { id: '1', timestamp: 3, source: 'Ops', message: 'First', url: '' },
+      { id: '2', timestamp: 2, source: 'Sales', message: 'Second', url: '' },
+      { id: '3', timestamp: 1, source: 'Ops', message: 'Third', url: '' }
+    ]
+
+    expect(groupInboxBySource(items)).toEqual([
+      { source: 'Ops', items: [items[0], items[2]] },
+      { source: 'Sales', items: [items[1]] }
+    ])
+  })
+
+  it('dismisses only messages from the selected source', () => {
+    const items = [
+      { id: '1', timestamp: 3, source: 'Ops', message: 'First', url: '' },
+      { id: '2', timestamp: 2, source: 'Sales', message: 'Second', url: '' },
+      { id: '3', timestamp: 1, source: 'Ops', message: 'Third', url: '' }
+    ]
+
+    expect(dismissInboxSource(items, 'Ops')).toEqual([items[1]])
   })
 })

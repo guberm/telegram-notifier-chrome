@@ -1,5 +1,5 @@
 import { DEFAULT_CONFIG, normalizeConfig, type AppConfig, type NotificationEvent } from './shared/config'
-import { addInboxItem, dismissInboxItem, type InboxItem } from './shared/inbox'
+import { addInboxItem, dismissInboxItem, dismissInboxSource, type InboxItem } from './shared/inbox'
 import { evaluateNotification, formatPreview, notificationTitle } from './shared/notification-policy'
 import { notificationKey } from './shared/telegram-mapper'
 import type { AppState, BackgroundMessage, Credentials, LogEntry, OffscreenMessage, RuntimeState } from './shared/protocol'
@@ -42,6 +42,11 @@ async function saveInbox(inbox: InboxItem[]): Promise<InboxItem[]> {
 async function dismissInbox(id: string): Promise<InboxItem[]> {
   const stored = await chrome.storage.local.get({ [KEYS.inbox]: [] as InboxItem[] })
   return saveInbox(dismissInboxItem(stored[KEYS.inbox], id))
+}
+
+async function dismissSource(source: string): Promise<InboxItem[]> {
+  const stored = await chrome.storage.local.get({ [KEYS.inbox]: [] as InboxItem[] })
+  return saveInbox(dismissInboxSource(stored[KEYS.inbox], source))
 }
 
 async function openInbox(id: string): Promise<void> {
@@ -191,6 +196,7 @@ chrome.runtime.onMessage.addListener((message: BackgroundMessage, _sender, sendR
           break
         case 'CLEAR_LOGS': await chrome.storage.local.set({ [KEYS.logs]: [] }); sendResponse({ ok: true }); break
         case 'DISMISS_INBOX_ITEM': sendResponse({ ok: true, data: await dismissInbox(message.id) }); break
+        case 'DISMISS_INBOX_SOURCE': sendResponse({ ok: true, data: await dismissSource(message.source) }); break
         case 'DISMISS_ALL_INBOX': sendResponse({ ok: true, data: await saveInbox([]) }); break
         case 'OPEN_INBOX_ITEM': await openInbox(message.id); sendResponse({ ok: true }); break
         case 'OFFSCREEN_READY': await initializeRuntime(); sendResponse({ ok: true }); break

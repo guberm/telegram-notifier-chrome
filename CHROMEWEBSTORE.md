@@ -1,6 +1,6 @@
 # Chrome Web Store Listing — Telegram Custom Notifier
 
-> Last Updated: 2026-08-30
+> Last Updated: 2026-08-31
 
 ## Store Listing
 
@@ -21,7 +21,7 @@ FEATURES
 • Choose incoming, outgoing, both, or muted notification direction globally or per chat
 • Apply quiet hours, text filters, regular expressions, mentions, sender IDs, topic IDs, and required keywords
 • Show optional message previews, media labels, and forum topic names
-• Review up to 100 recent matched messages with date, source, dismiss controls, and Telegram links
+• Review up to 100 recent matched messages in a resizable inbox with automatically collapsed multi-source groups and per-message, per-source, and dismiss-all controls
 • Choose a quick popup or a persistent Chrome side panel for the message inbox
 • Use the system appearance or explicitly choose light or dark mode
 • Import or export Android-compatible settings JSON and back up settings to Saved Messages
@@ -43,7 +43,14 @@ Storage keeps local credentials, settings, state, and logs. Notifications displa
 SUPPORT
 Report issues at https://github.com/guberm/telegram-notifier-chrome/issues or email michael@guber.dev.
 
-Version 1.3.1 — Fixes the extension icon so the selected Popup or Side panel message view opens correctly.
+INDEPENDENT SOFTWARE
+Telegram Custom Notifier is independent software and is not affiliated with, endorsed by, or sponsored by Telegram.
+
+Version 1.4.0 — Adds a resizable, grouped inbox with collapsible sources and per-source dismissal.
+
+**What's New (Version 1.4.0)**
+
+Inbox messages are now grouped into source sections that start collapsed when more than one source exists. Dismiss one source without clearing others, resize the Messages area vertically, and keep manually selected group states and scroll position stable when a message is dismissed. Individual Dismiss controls now lead each message row, and the empty state has proper spacing.
 
 **Category**
 
@@ -57,20 +64,36 @@ Shows rule-filtered desktop notifications for selected chats from a locally conn
 
 English
 
+## Submission Package
+
+**Chrome Web Store ZIP**
+
+`release-artifacts/chrome-web-store/telegram-custom-notifier-chrome-web-store-v1.4.0.zip`
+
+**SHA-256**
+
+`977C0AAA870A74D45A1EBF5E90F7D258F2E3ECACD154B2BC17374FE45C4A2A53`
+
+**Size**: 377,268 bytes
+
+**Package status**: Validated Manifest V3 package with `manifest.json` at the ZIP root, 21 runtime files, no source maps, tests, development configuration, credentials, or repository files.
+
+**Submission gate**: The ZIP, dashboard text, store icon, privacy policy, and two current screenshots are ready. Before CWS submission, complete a final installed-extension check in a normal Chrome profile. The 440×280 small promo tile remains optional.
+
 ## Graphics & Assets
 
 | Asset | Dimensions | Status | Filename |
 |-------|-----------:|--------|----------|
 | Store Icon | 128×128 PNG | Ready | `public/icons/icon-128.png` |
-| Screenshot 1 | 1280×800 PNG | Needs update | `store-assets/screenshot-options.png` |
-| Screenshot 2 | 1280×800 PNG | Not created | |
+| Screenshot 1 | 1280×800 PNG | Ready | `store-assets/screenshot-settings-v1.3.1.png` |
+| Screenshot 2 | 1280×800 PNG | Ready | `store-assets/screenshot-side-panel-v1.4.0.png` |
 | Small Promo Tile | 440×280 PNG | Not created | |
 
 ### Screenshot Notes
 
-Screenshot 1 shows the account status, notification controls, quiet hours, suppression filters, and chat-selection interface. It must not show a real phone number, API Hash, login code, password, message content, or private chat name.
+Screenshot 1 presents the current dark-mode settings interface, including Theme and Message view selection, account setup, and local-processing messaging. All displayed field values are placeholders.
 
-Screenshot 2 should show the popup inbox using synthetic dates, sources, and message text only.
+Screenshot 2 presents the persistent Chrome side-panel inbox with collapsible source groups beside a generic browser page. Its dates, sources, and message previews are synthetic demonstration content.
 
 ## Permissions Justification
 
@@ -113,6 +136,10 @@ Screenshot 2 should show the popup inbox using synthetic dates, sources, and mes
 
 https://github.com/guberm/telegram-notifier-chrome/blob/main/PRIVACY.md
 
+**Limited Use Disclosure**
+
+Telegram Custom Notifier uses personal and sensitive user data only to provide and improve its disclosed notification, inbox, filtering, and settings-backup features. The extension does not use or transfer user data for advertising, creditworthiness, lending, or any unrelated purpose, and the developer cannot access or allow humans to read the user's Telegram data. The extension's use of user data complies with the Chrome Web Store User Data Policy, including its Limited Use requirements.
+
 ## Distribution
 
 **Visibility**: Public
@@ -130,6 +157,7 @@ https://github.com/guberm/telegram-notifier-chrome/blob/main/PRIVACY.md
 
 | Version | Date | Changes | Status |
 |---------|------|---------|--------|
+| 1.4.0 | 2026-08-31 | Resizable auto-collapsed source groups, stable view state, per-source dismissal, leading Dismiss controls, and corrected empty-state spacing | GitHub release; CWS package prepared |
 | 1.3.1 | 2026-08-30 | Fix extension icon routing so the selected popup or persistent side-panel inbox opens correctly | GitHub release |
 | 1.3.0 | 2026-08-30 | System/light/dark themes and user-selectable popup or persistent side-panel message inbox | GitHub release |
 | 1.2.1 | 2026-08-30 | Actual text for fallback message types; every saved selected chat remains visible, including unavailable entries | GitHub release |

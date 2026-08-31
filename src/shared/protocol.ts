@@ -46,6 +46,7 @@ export type BackgroundMessage =
   | { target: 'background'; type: 'TEST_NOTIFICATION' }
   | { target: 'background'; type: 'CLEAR_LOGS' }
   | { target: 'background'; type: 'DISMISS_INBOX_ITEM'; id: string }
+  | { target: 'background'; type: 'DISMISS_INBOX_SOURCE'; source: string }
   | { target: 'background'; type: 'DISMISS_ALL_INBOX' }
   | { target: 'background'; type: 'OPEN_INBOX_ITEM'; id: string }
   | { target: 'background'; type: 'OFFSCREEN_READY' }

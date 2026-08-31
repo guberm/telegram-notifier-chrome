@@ -9,6 +9,11 @@ export interface InboxItem {
   url: string
 }
 
+export interface InboxGroup {
+  source: string
+  items: InboxItem[]
+}
+
 // ponytail: bounded local inbox; add pagination before retaining more than 100 messages.
 const INBOX_LIMIT = 100
 
@@ -27,4 +32,14 @@ export function addInboxItem(items: InboxItem[], event: NotificationEvent): Inbo
 
 export function dismissInboxItem(items: InboxItem[], id: string): InboxItem[] {
   return items.filter((item) => item.id !== id)
+}
+
+export function groupInboxBySource(items: InboxItem[]): InboxGroup[] {
+  const groups = new Map<string, InboxItem[]>()
+  for (const item of items) groups.set(item.source, [...(groups.get(item.source) ?? []), item])
+  return [...groups].map(([source, sourceItems]) => ({ source, items: sourceItems }))
+}
+
+export function dismissInboxSource(items: InboxItem[], source: string): InboxItem[] {
+  return items.filter((item) => item.source !== source)
 }

@@ -16,7 +16,7 @@ The extension is independent, open source, and not affiliated with or endorsed b
 - Forum-topic titles formatted as `Group name - Topic name`.
 - Separate notification conversations by chat, topic, and sender.
 - Notification clicks open a Telegram message link when available; private conversations fall back to Telegram Web.
-- Popup inbox with date, chat/sender source, message preview, per-message dismissal, dismiss-all, and Telegram links.
+- Resizable popup inbox grouped by chat/sender source, automatically collapsed when multiple sources exist, with preserved view state, per-message, per-source, and dismiss-all controls plus Telegram links.
 - User-selectable popup or persistent Chrome side-panel inbox.
 - System, light, and dark appearance modes across the popup, side panel, and settings.
 - Android-compatible JSON settings import/export and settings backup/restore through Saved Messages, with legacy Chrome backup support.

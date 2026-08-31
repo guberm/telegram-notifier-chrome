@@ -30,6 +30,10 @@ The bundled `@mtcute/web` library implements the Telegram MTProto client locally
 
 Data is not sold, rented, or shared with advertisers or data brokers. Data is exchanged only with Telegram as required for user-requested Telegram account functionality.
 
+## Limited Use
+
+Telegram Custom Notifier uses personal and sensitive user data only to provide and improve its disclosed notification, inbox, filtering, and settings-backup features. The extension does not use or transfer user data for advertising, creditworthiness, lending, or any unrelated purpose, and the developer cannot access or allow humans to read the user's Telegram data. The extension's use of user data complies with the Chrome Web Store User Data Policy, including its Limited Use requirements.
+
 ## Retention, export, and deletion
 
 Settings remain in the current Chrome profile until the user changes them, clears extension data, or removes the extension. Popup inbox entries remain until the user dismisses an individual entry, selects Dismiss all, clears extension data, or removes the extension. The user can import or export Android-compatible settings JSON and export diagnostic logs from the options page. Logging out revokes the active Telegram authorization used by the extension. Removing the extension deletes its Chrome-owned local storage and IndexedDB data.
