@@ -20,6 +20,7 @@ describe('popup', () => {
 
     expect(manifest.permissions).toContain('sidePanel')
     expect(manifest.side_panel.default_path).toBe('sidepanel.html')
+    expect(manifest.action.default_popup).toBeUndefined()
     expect(options).toContain('id="theme"')
     expect(options).toContain('id="message-view"')
     expect(sidePanel).toContain('/src/popup.ts')

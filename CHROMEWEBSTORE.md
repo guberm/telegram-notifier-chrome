@@ -43,7 +43,7 @@ Storage keeps local credentials, settings, state, and logs. Notifications displa
 SUPPORT
 Report issues at https://github.com/guberm/telegram-notifier-chrome/issues or email michael@guber.dev.
 
-Version 1.3.0 — Adds system/light/dark themes and lets the user open the message inbox in a popup or persistent Chrome side panel.
+Version 1.3.1 — Fixes the extension icon so the selected Popup or Side panel message view opens correctly.
 
 **Category**
 
@@ -130,6 +130,7 @@ https://github.com/guberm/telegram-notifier-chrome/blob/main/PRIVACY.md
 
 | Version | Date | Changes | Status |
 |---------|------|---------|--------|
+| 1.3.1 | 2026-08-30 | Fix extension icon routing so the selected popup or persistent side-panel inbox opens correctly | GitHub release |
 | 1.3.0 | 2026-08-30 | System/light/dark themes and user-selectable popup or persistent side-panel message inbox | GitHub release |
 | 1.2.1 | 2026-08-30 | Actual text for fallback message types; every saved selected chat remains visible, including unavailable entries | GitHub release |
 | 1.2.0 | 2026-08-30 | Popup message inbox with date, source, preview, per-item and dismiss-all controls, and Telegram links | GitHub release |
