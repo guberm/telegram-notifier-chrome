@@ -1,6 +1,6 @@
 import { InputMedia, TelegramClient, type Message, type TelegramClient as TelegramClientType } from '@mtcute/web'
 import { isSettingsBackupFile, SETTINGS_BACKUP_FILE, type NotificationEvent } from './shared/config'
-import type { BackgroundMessage, ChatInfo, Credentials, OffscreenMessage, RuntimeState } from './shared/protocol'
+import type { BackgroundMessage, ChatInfo, Credentials, ForumTopicInfo, OffscreenMessage, RuntimeState } from './shared/protocol'
 import { chatType, mediaKind, messageUrl, missingChatIds, unavailableChat } from './shared/telegram-mapper'
 
 let client: TelegramClientType | null = null
@@ -21,11 +21,16 @@ async function setState(status: RuntimeState['status'], userName = '', error = '
 
 async function mapMessage(message: Message): Promise<NotificationEvent> {
   const chatId = String(message.chat.id)
-  const threadId = String(message.replyToMessage?.threadId ?? '')
+  const isForum = message.chat.type === 'chat' && message.chat.isForum
+  const threadId = String(isForum && !message.isTopicMessage ? 1 : message.replyToMessage?.threadId ?? (isForum ? 1 : ''))
   let topicName = ''
-  if (message.isTopicMessage && threadId && message.chat.type === 'chat') {
-    const [topic] = await requireClient().getForumTopicsById(message.chat, Number(threadId))
-    topicName = topic?.title ?? ''
+  if ((isForum || message.isTopicMessage) && threadId && message.chat.type === 'chat') {
+    try {
+      const [topic] = await requireClient().getForumTopicsById(message.chat, Number(threadId))
+      topicName = topic?.title ?? ''
+    } catch {
+      await sendBackground({ target: 'background', type: 'RUNTIME_LOG', level: 'error', message: 'Topic name unavailable; using chat title' })
+    }
   }
   let url = ''
   try { url = message.link } catch {
@@ -100,7 +105,8 @@ async function listChats(payload: unknown): Promise<ChatInfo[]> {
       username: peer.username ?? '',
       type: chatType(peer.type, peer.type === 'user' && peer.isBot, peer.type === 'chat' ? peer.chatType : ''),
       archived: dialog.isArchived,
-      muted: dialog.isMuted === true
+      muted: dialog.isMuted === true,
+      isForum: peer.type === 'chat' && peer.isForum
     })
     if (scanned >= 500 && pending.size === 0) break
   }
@@ -118,6 +124,19 @@ async function removeChat(payload: unknown): Promise<void> {
   } else {
     await tg.leaveChat(peer)
   }
+}
+
+async function listTopics(payload: unknown): Promise<ForumTopicInfo[]> {
+  const chatId = (payload as { chatId?: unknown })?.chatId
+  if (typeof chatId !== 'string' || !/^-\d+$/.test(chatId) || !Number.isSafeInteger(Number(chatId))) {
+    throw new Error('A valid group ID is required')
+  }
+  const tg = requireClient()
+  const peer = await tg.getPeer(Number(chatId))
+  if (peer.type !== 'chat' || !peer.isForum) throw new Error('This group does not have topics')
+  const topics: ForumTopicInfo[] = []
+  for await (const topic of tg.iterForumTopics(peer)) topics.push({ id: String(topic.id), name: topic.title })
+  return topics
 }
 
 async function backupToSavedMessages(payload: unknown): Promise<void> {
@@ -174,6 +193,7 @@ async function command(name: string, payload: unknown): Promise<unknown> {
     }
     case 'CHECK_PASSWORD': await tg.checkPassword(String((payload as { password?: string })?.password ?? '')); pendingCode = null; await markConnected(); return null
     case 'LIST_CHATS': return listChats(payload)
+    case 'LIST_TOPICS': return listTopics(payload)
     case 'REMOVE_CHAT': await removeChat(payload); return null
     case 'BACKUP_SAVED': await backupToSavedMessages(payload); return null
     case 'RESTORE_SAVED': return restoreFromSavedMessages()

@@ -61,6 +61,18 @@ export const DEFAULT_CONFIG: AppConfig = {
 export const SETTINGS_BACKUP_FILE = 'telegram_notifier_settings.json'
 const LEGACY_SETTINGS_BACKUP_FILE = 'custom-chat-notifier-settings.json'
 
+export function selectForumTopics(config: AppConfig, chatId: string, allTopics: boolean, selectedIds: string[]): void {
+  const selected = new Set(config.selectedChatIds)
+  if (!allTopics && selectedIds.length === 0) selected.delete(chatId)
+  else {
+    selected.add(chatId)
+    config.chatRules[chatId] = {
+      ...(config.chatRules[chatId] ?? { mentionsOnly: false, senderIds: [], requiredKeywords: [] }),
+      threadIds: allTopics ? [] : [...new Set(selectedIds)]
+    }
+  }
+  config.selectedChatIds = [...selected]
+}
 const directions = new Set<Direction>(['incoming', 'outgoing', 'both', 'none'])
 const themes = new Set<Theme>(['system', 'light', 'dark'])
 const messageViews = new Set<MessageView>(['popup', 'side-panel'])

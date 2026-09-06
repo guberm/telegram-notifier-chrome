@@ -84,6 +84,15 @@
         <div class="actions"><button id="save-chat-rule" value="default" class="primary">Save rules</button><button value="cancel">Cancel</button></div>
       </form>
     </dialog>
+    <dialog id="topic-dialog" aria-labelledby="topic-dialog-title">
+      <form method="dialog" class="dialog-form">
+        <h2 id="topic-dialog-title">Topic notifications</h2>
+        <p>Select all topics or individual topics. Clear every checkbox to disable notifications for this group.</p>
+        <label class="inline-check"><input id="all-topics" type="checkbox">All topics</label>
+        <div id="topic-list" class="topic-list"></div>
+        <div class="actions"><button id="save-topics" type="button" class="primary">Save topics</button><button value="cancel">Cancel</button></div>
+      </form>
+    </dialog>
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
     <script type="module" src="/src/options.ts"></script>
   </body>

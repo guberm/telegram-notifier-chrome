@@ -21,7 +21,10 @@ export interface ChatInfo {
   type: AppChatType
   archived: boolean
   muted: boolean
+  isForum?: boolean
 }
+
+export interface ForumTopicInfo { id: string; name: string }
 
 export interface LogEntry {
   timestamp: number

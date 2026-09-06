@@ -1,11 +1,12 @@
-import { exportConfig, importConfig, normalizeConfig, SETTINGS_BACKUP_FILE, type AppConfig, type ChatRule, type Direction, type MessageView, type Theme } from './shared/config'
-import type { AppState, BackgroundMessage, ChatInfo, Credentials } from './shared/protocol'
+import { exportConfig, importConfig, normalizeConfig, selectForumTopics, SETTINGS_BACKUP_FILE, type AppConfig, type ChatRule, type Direction, type MessageView, type Theme } from './shared/config'
+import type { AppState, BackgroundMessage, ChatInfo, Credentials, ForumTopicInfo } from './shared/protocol'
 import { applyTheme } from './shared/theme'
 
 const element = <T extends HTMLElement>(id: string): T => document.getElementById(id) as T
 let state: AppState
 let chats: ChatInfo[] = []
 let activeRuleChatId = ''
+let activeTopicChatId = ''
 
 async function send(message: BackgroundMessage): Promise<unknown> {
   const response = await chrome.runtime.sendMessage(message) as { ok: boolean; data?: unknown; error?: string }
@@ -94,6 +95,20 @@ function renderChats(): void {
     title.textContent = chat.title
     detail.textContent = `${chat.type}${chat.username ? ` · @${chat.username}` : ''}${chat.archived ? ' · archived' : ''}${chat.muted ? ' · muted in Telegram' : ''} · ID ${chat.id}`
     const checkbox = row.querySelector<HTMLInputElement>('.chat-check')!
+    if (chat.isForum) {
+      const topicIds = state.config.chatRules[chat.id]?.threadIds ?? []
+      const topics = document.createElement('button')
+      topics.textContent = selected ? topicIds.length ? `Topics (${topicIds.length})` : 'All topics' : 'Topics'
+      topics.addEventListener('click', () => { void run(async () => {
+        topics.disabled = true
+        try { await openTopicDialog(chat) } finally { topics.disabled = false }
+      }) })
+      const controls = document.createElement('div')
+      controls.className = 'chat-rule-actions'
+      const rules = row.querySelector('.chat-rules')!
+      rules.replaceWith(controls)
+      controls.append(topics, rules)
+    }
     checkbox.addEventListener('change', () => {
       const ids = new Set(state.config.selectedChatIds)
       checkbox.checked ? ids.add(chat.id) : ids.delete(chat.id)
@@ -161,6 +176,51 @@ function openRuleDialog(chat: ChatInfo): void {
   element<HTMLTextAreaElement>('rule-keywords').value = rule.requiredKeywords.join('\n')
   element<HTMLDialogElement>('rule-dialog').showModal()
 }
+
+async function openTopicDialog(chat: ChatInfo): Promise<void> {
+  toast('Loading topics…')
+  const topics = await send({ target: 'background', type: 'RUNTIME_COMMAND', command: 'LIST_TOPICS', payload: { chatId: chat.id } }) as ForumTopicInfo[]
+  const enabled = state.config.selectedChatIds.includes(chat.id)
+  const selectedIds = state.config.chatRules[chat.id]?.threadIds ?? []
+  // Keep saved IDs that Telegram no longer returns visible until the user removes them.
+  for (const id of selectedIds) if (!topics.some((topic) => topic.id === id)) topics.push({ id, name: `Unavailable topic (ID ${id})` })
+  activeTopicChatId = chat.id
+  element('topic-dialog-title').textContent = `Notifications for ${chat.title}`
+  const all = element<HTMLInputElement>('all-topics')
+  all.checked = enabled && selectedIds.length === 0
+  element('topic-list').replaceChildren(...topics.map((topic) => {
+    const label = document.createElement('label')
+    label.className = 'inline-check'
+    const checkbox = document.createElement('input')
+    checkbox.type = 'checkbox'
+    checkbox.value = topic.id
+    checkbox.checked = enabled && selectedIds.includes(topic.id)
+    checkbox.addEventListener('change', () => { if (checkbox.checked) all.checked = false })
+    label.append(checkbox, document.createTextNode(topic.name))
+    return label
+  }))
+  if (!topics.length) element('topic-list').textContent = 'No topics found. You can still select All topics.'
+  element<HTMLDialogElement>('topic-dialog').showModal()
+}
+
+element('all-topics').addEventListener('change', () => {
+  if (element<HTMLInputElement>('all-topics').checked) {
+    element('topic-list').querySelectorAll<HTMLInputElement>('input').forEach((checkbox) => { checkbox.checked = false })
+  }
+})
+element('save-topics').addEventListener('click', () => { void run(async () => {
+  const button = element<HTMLButtonElement>('save-topics')
+  button.disabled = true
+  try {
+    const config = normalizeConfig(state.config)
+    const selectedIds = Array.from(element('topic-list').querySelectorAll<HTMLInputElement>('input:checked'), (input) => input.value)
+    selectForumTopics(config, activeTopicChatId, element<HTMLInputElement>('all-topics').checked, selectedIds)
+    state.config = normalizeConfig(await send({ target: 'background', type: 'SAVE_CONFIG', config }))
+    element<HTMLDialogElement>('topic-dialog').close()
+    renderChats()
+    toast('Topic notification selection saved')
+  } finally { button.disabled = false }
+}) })
 
 async function removeChat(chat: ChatInfo): Promise<void> {
   const blockBot = chat.type === 'bot' && confirm(`Block “${chat.title}” as well as deleting its history?\n\nChoose Cancel to delete history without blocking.`)

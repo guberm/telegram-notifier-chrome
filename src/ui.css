@@ -60,6 +60,8 @@ input[type="checkbox"] { width:20px; height:20px; accent-color:var(--blue); }
 .logs { max-height:260px; overflow:auto; margin:0; padding:16px; border-radius:12px; background:var(--log-bg); color:var(--log-ink); font:12px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace; white-space:pre-wrap; }
 dialog { width:min(540px,calc(100% - 32px)); border:0; border-radius:18px; padding:0; background:var(--panel); color:var(--ink); box-shadow:var(--dialog-shadow); }
 dialog::backdrop { background:var(--backdrop); }
+.chat-rule-actions { display:flex; gap:6px; flex-wrap:wrap; }
+.topic-list { display:flex; flex-direction:column; gap:12px; max-height:45vh; overflow:auto; }
 .dialog-form { display:flex; flex-direction:column; gap:15px; padding:24px; }
 .icon-button { min-width:40px; padding:4px; font-size:24px; }
 .toast { position:fixed; right:24px; bottom:24px; max-width:420px; padding:12px 16px; border-radius:12px; background:var(--toast); color:var(--toast-ink); box-shadow:var(--shadow); opacity:0; transform:translateY(12px); pointer-events:none; transition:.18s ease; }

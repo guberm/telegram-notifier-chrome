@@ -1,6 +1,6 @@
 # Chrome Web Store Listing — Telegram Custom Notifier
 
-> Last Updated: 2026-08-31
+> Last Updated: 2026-09-06
 
 ## Store Listing
 
@@ -18,6 +18,7 @@ Show local desktop notifications only for Telegram chats and messages that match
 
 FEATURES
 • Select private chats, groups, channels, and bots, including chats muted in another Telegram client
+• Choose all topics or individual topics by name in forum groups
 • Choose incoming, outgoing, both, or muted notification direction globally or per chat
 • Apply quiet hours, text filters, regular expressions, mentions, sender IDs, topic IDs, and required keywords
 • Show optional message previews, media labels, and forum topic names
@@ -46,11 +47,11 @@ Report issues at https://github.com/guberm/telegram-notifier-chrome/issues or em
 INDEPENDENT SOFTWARE
 Telegram Custom Notifier is independent software and is not affiliated with, endorsed by, or sponsored by Telegram.
 
-Version 1.4.0 — Adds a resizable, grouped inbox with collapsible sources and per-source dismissal.
+Version 1.5.0 — Choose notification topics by name in forum groups.
 
-**What's New (Version 1.4.0)**
+**What's New (Version 1.5.0)**
 
-Inbox messages are now grouped into source sections that start collapsed when more than one source exists. Dismiss one source without clearing others, resize the Messages area vertically, and keep manually selected group states and scroll position stable when a message is dismissed. Individual Dismiss controls now lead each message row, and the empty state has proper spacing.
+Select all topics or individual topics by name in forum groups. Clear every checkbox to disable notifications for a group. Your other rules and Android-compatible settings are preserved. General topic messages are now handled correctly, and notifications still arrive if a topic name cannot be loaded.
 
 **Category**
 
@@ -68,30 +69,30 @@ English
 
 **Chrome Web Store ZIP**
 
-`release-artifacts/chrome-web-store/telegram-custom-notifier-chrome-web-store-v1.4.0.zip`
+`release-artifacts/telegram-custom-notifier-v1.5.0.zip`
 
 **SHA-256**
 
-`977C0AAA870A74D45A1EBF5E90F7D258F2E3ECACD154B2BC17374FE45C4A2A53`
+`9A354A210ECD713323C7F453D07E25A4D290D1D257F7D41848F91B329F9A02E4`
 
-**Size**: 377,268 bytes
+**Size**: 378,164 bytes
 
 **Package status**: Validated Manifest V3 package with `manifest.json` at the ZIP root, 21 runtime files, no source maps, tests, development configuration, credentials, or repository files.
 
-**Submission gate**: The ZIP, dashboard text, store icon, privacy policy, and two current screenshots are ready. Before CWS submission, complete a final installed-extension check in a normal Chrome profile. The 440×280 small promo tile remains optional.
+**Submission gate**: The v1.5.0 ZIP is prepared for upload. Topic selection was tested in a browser with synthetic Telegram data. Before CWS submission, check real Telegram messages in the installed extension and refresh the settings screenshot to show topic selection. The 440×280 small promo tile remains optional.
 
 ## Graphics & Assets
 
 | Asset | Dimensions | Status | Filename |
 |-------|-----------:|--------|----------|
 | Store Icon | 128×128 PNG | Ready | `public/icons/icon-128.png` |
-| Screenshot 1 | 1280×800 PNG | Ready | `store-assets/screenshot-settings-v1.3.1.png` |
+| Screenshot 1 | 1280×800 PNG | Refresh for topic selection | `store-assets/screenshot-settings-v1.3.1.png` |
 | Screenshot 2 | 1280×800 PNG | Ready | `store-assets/screenshot-side-panel-v1.4.0.png` |
 | Small Promo Tile | 440×280 PNG | Not created | |
 
 ### Screenshot Notes
 
-Screenshot 1 presents the current dark-mode settings interface, including Theme and Message view selection, account setup, and local-processing messaging. All displayed field values are placeholders.
+Screenshot 1 presents the previous dark-mode settings interface, including Theme and Message view selection, account setup, and local-processing messaging. It does not show the new topic selector. All displayed field values are placeholders.
 
 Screenshot 2 presents the persistent Chrome side-panel inbox with collapsible source groups beside a generic browser page. Its dates, sources, and message previews are synthetic demonstration content.
 
@@ -154,6 +155,8 @@ Telegram Custom Notifier uses personal and sensitive user data only to provide a
 **Homepage URL**: https://github.com/guberm/telegram-notifier-chrome
 
 ## Version History
+
+Version 1.5.0 (2026-09-06): Added forum topic selection by name, All topics, and disabling a group with an empty selection. Preserves Android-compatible settings and other chat rules. General topic messages are supported; a failed topic-name lookup no longer drops the notification. CWS ZIP validated; 40 tests, typecheck, and build passed.
 
 | Version | Date | Changes | Status |
 |---------|------|---------|--------|

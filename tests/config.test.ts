@@ -4,8 +4,27 @@ import {
   exportConfig,
   importConfig,
   isSettingsBackupFile,
-  normalizeConfig
+  normalizeConfig,
+  selectForumTopics
 } from '../src/shared/config'
+
+describe('forum topic selection', () => {
+  it('selects all, specific topics, or disables the group while preserving other rules', () => {
+    const config = normalizeConfig({ selectedChatIds: ['other'], chatRules: {
+      group: { mentionsOnly: true, senderIds: ['42'], threadIds: ['7'], requiredKeywords: ['ship'] }
+    } })
+    selectForumTopics(config, 'group', false, ['1', '9'])
+    expect(config.selectedChatIds).toEqual(['other', 'group'])
+    expect(config.chatRules.group).toEqual({ mentionsOnly: true, senderIds: ['42'], threadIds: ['1', '9'], requiredKeywords: ['ship'] })
+    expect(importConfig(exportConfig(config)).chatRules.group).toEqual(config.chatRules.group)
+    selectForumTopics(config, 'group', true, ['9'])
+    expect(config.chatRules.group.threadIds).toEqual([])
+    expect(config.selectedChatIds).toEqual(['other', 'group'])
+    selectForumTopics(config, 'group', false, [])
+    expect(config.selectedChatIds).toEqual(['other'])
+    expect(config.chatRules.group.mentionsOnly).toBe(true)
+  })
+})
 
 describe('normalizeConfig', () => {
   it('returns independent defaults for missing input', () => {

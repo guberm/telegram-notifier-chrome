@@ -14,6 +14,7 @@ The extension is independent, open source, and not affiliated with or endorsed b
 - Per-chat rules for mentions, allowed sender IDs, topic/thread IDs, and required keywords.
 - Message previews with media labels for photos, video, documents, voice, audio, stickers, polls, locations, and contacts.
 - Forum-topic titles formatted as `Group name - Topic name`.
+- Select **Topics** beside a forum group to enable all topics or choose individual topics by name. Clear every checkbox to disable the group; other chat rules are preserved.
 - Separate notification conversations by chat, topic, and sender.
 - Notification clicks open a Telegram message link when available; private conversations fall back to Telegram Web.
 - Resizable popup inbox grouped by chat/sender source, automatically collapsed when multiple sources exist, with preserved view state, per-message, per-source, and dismiss-all controls plus Telegram links.
@@ -66,7 +67,7 @@ npm run check
 npm run package
 ```
 
-`npm run check` runs 25 focused tests, TypeScript validation, and the production Vite build. The package script creates a clean ZIP from `dist/` under `release-artifacts/` and prints its SHA-256.
+`npm run check` runs the automated tests, TypeScript validation, and the production Vite build. The package script creates a clean ZIP from `dist/` under `release-artifacts/` and prints its SHA-256. The same ZIP can be uploaded to Chrome Web Store or extracted for an unpacked installation.
 
 ## Architecture
 
